@@ -4,7 +4,31 @@
  * Docs: https://docs.keyauth.cc/
  */
 
+import { createHash } from 'crypto'
+import { headers } from 'next/headers'
+
 const KEYAUTH_API = 'https://keyauth.win/api/1.3/'
+
+/**
+ * Build a stable HWID from client IP + User-Agent.
+ * This ensures the same browser on the same device always produces the same HWID,
+ * so KeyAuth can properly lock the license to a single device.
+ */
+async function getDeviceHwid(): Promise<string> {
+    try {
+        const h = await headers()
+        const ip = h.get('x-forwarded-for')?.split(',')[0].trim()
+            || h.get('x-real-ip')
+            || 'unknown-ip'
+        const ua = h.get('user-agent') || 'unknown-ua'
+        const hash = createHash('sha256').update(`${ip}|${ua}`).digest('hex')
+        // Prefix ensures min length even if hash is short; sha256 hex is 64 chars anyway.
+        return `web-${hash}`.slice(0, 64)
+    } catch {
+        // Fallback if headers() is unavailable
+        return `web-fallback-${Date.now()}-${Math.random().toString(36).slice(2)}`
+    }
+}
 
 interface KeyAuthResponse {
     success: boolean
@@ -90,8 +114,8 @@ export async function verifyKeyAuthLicense(key: string): Promise<KeyAuthVerifyRe
     }
 
     try {
-        // Generate a random HWID per-verification so keys don't get locked to a single device.
-        const hwid = `web-${Math.random().toString(36).slice(2, 12)}`
+        // Use a stable HWID derived from IP + User-Agent so the key locks to the device.
+        const hwid = await getDeviceHwid()
 
         const body = new URLSearchParams({
             type: 'license',
