@@ -1,20 +1,12 @@
 "use server"
 
 import { prisma } from "@/lib/prisma"
-import { getSession } from "@/lib/auth"
+import { requireAdmin } from "@/lib/admin"
 import { hash } from "bcryptjs"
 import { revalidatePath } from "next/cache"
 
 async function checkAdmin() {
-    const session = await getSession()
-    if (!session?.userId) throw new Error("Unauthorized")
-
-    const user = await prisma.user.findUnique({
-        where: { id: session.userId },
-        select: { isModerator: true }
-    })
-
-    if (!user?.isModerator) throw new Error("Forbidden")
+    await requireAdmin()
 }
 
 export async function updateUserBadges(userId: string, badgeIds: string[]) {

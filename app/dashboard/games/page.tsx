@@ -1,49 +1,60 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { getRedisStatus } from "@/lib/redis"
 import { prisma } from "@/lib/prisma"
-import { Activity, CheckCircle2, XCircle, Server, Database, Shield, Sparkles } from "lucide-react"
-import { changelog } from "@/lib/changelog"
+import { CheckCircle2, XCircle, AlertTriangle, Wrench, Server, Sparkles } from "lucide-react"
 
 export const dynamic = 'force-dynamic'
 
-export default async function StatusPage() {
-    // Check Postgres
-    let isPostgresAlive = false
+// Live health checks keyed by serviceKey for auto-detect services.
+async function runHealthCheck(key: string): Promise<boolean> {
     try {
-        await prisma.$queryRaw`SELECT 1`
-        isPostgresAlive = true
+        if (key === 'database') {
+            await prisma.$queryRaw`SELECT 1`
+            return true
+        }
+        if (key === 'external') {
+            return await getRedisStatus()
+        }
+        if (key === 'keyauth') {
+            return !!(process.env.KEYAUTH_APP_NAME && process.env.KEYAUTH_OWNER_ID)
+        }
     } catch {
-        isPostgresAlive = false
+        return false
     }
+    return true
+}
 
-    // Check Redis / external services
-    const isRedisAlive = await getRedisStatus()
+const STATUS_META: Record<string, { label: string; color: string; icon: any; ok: boolean }> = {
+    operational: { label: 'Operational', color: 'text-green-400', icon: CheckCircle2, ok: true },
+    degraded: { label: 'Degraded', color: 'text-yellow-400', icon: AlertTriangle, ok: false },
+    maintenance: { label: 'Maintenance', color: 'text-blue-400', icon: Wrench, ok: false },
+    offline: { label: 'Offline', color: 'text-red-400', icon: XCircle, ok: false },
+}
 
-    // Check KeyAuth (just env presence; live check would hit their API)
-    const isKeyAuthConfigured = !!(process.env.KEYAUTH_APP_NAME && process.env.KEYAUTH_OWNER_ID)
+export default async function StatusPage() {
+    const dbServices = await prisma.serviceStatus.findMany({
+        orderBy: [{ sortOrder: 'asc' }, { createdAt: 'asc' }],
+    })
 
-    const services = [
-        {
-            name: "Main Database",
-            icon: Database,
-            status: isPostgresAlive,
-            desc: "PostgreSQL cluster (Supabase)",
-        },
-        {
-            name: "External Services",
-            icon: Server,
-            status: isRedisAlive,
-            desc: "Cache / real-time layer",
-        },
-        {
-            name: "License Validation",
-            icon: Shield,
-            status: isKeyAuthConfigured,
-            desc: "KeyAuth.cc integration",
-        },
-    ]
+    const changelog = await prisma.changelogEntry.findMany({
+        orderBy: { createdAt: 'desc' },
+    })
 
-    const allOnline = services.every(s => s.status)
+    // Resolve each service's effective status (auto-detect vs manual)
+    const services = await Promise.all(dbServices.map(async s => {
+        let effectiveStatus = s.status
+        if (s.autoDetect) {
+            const alive = await runHealthCheck(s.serviceKey)
+            effectiveStatus = alive ? 'operational' : 'offline'
+        }
+        return {
+            ...s,
+            effectiveStatus,
+            meta: STATUS_META[effectiveStatus] || STATUS_META.operational,
+        }
+    }))
+
+    const allOnline = services.length > 0 && services.every(s => s.meta.ok)
 
     return (
         <div className="space-y-10 h-full flex flex-col">
@@ -78,27 +89,40 @@ export default async function StatusPage() {
             </Card>
 
             {/* Service Status Grid */}
-            <div className="grid gap-4 md:grid-cols-3">
-                {services.map(service => {
-                    const Icon = service.icon
-                    return (
-                        <Card key={service.name} className="bg-black/40 border-white/10 backdrop-blur-md">
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium text-muted-foreground">
-                                    {service.name}
-                                </CardTitle>
-                                <Icon className="h-4 w-4 text-primary" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className={`text-2xl font-bold ${service.status ? "text-green-400" : "text-red-400"}`}>
-                                    {service.status ? "Operational" : "Offline"}
-                                </div>
-                                <p className="text-xs text-muted-foreground mt-1">{service.desc}</p>
-                            </CardContent>
-                        </Card>
-                    )
-                })}
-            </div>
+            {services.length === 0 ? (
+                <div className="text-center py-12 border border-dashed border-white/10 rounded-xl bg-white/5">
+                    <Server className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
+                    <p className="text-muted-foreground">No services configured yet.</p>
+                    <p className="text-xs text-muted-foreground mt-1">Add services from the Moderator panel → Status tab.</p>
+                </div>
+            ) : (
+                <div className="grid gap-4 md:grid-cols-3">
+                    {services.map(service => {
+                        const StatusIcon = service.meta.icon
+                        return (
+                            <Card key={service.id} className="bg-black/40 border-white/10 backdrop-blur-md">
+                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <CardTitle className="text-sm font-medium text-muted-foreground">
+                                        {service.name}
+                                    </CardTitle>
+                                    <StatusIcon className={`h-4 w-4 ${service.meta.color}`} />
+                                </CardHeader>
+                                <CardContent>
+                                    <div className={`text-2xl font-bold ${service.meta.color}`}>
+                                        {service.meta.label}
+                                    </div>
+                                    <p className="text-xs text-muted-foreground mt-1">{service.description}</p>
+                                    {service.message && !service.meta.ok && (
+                                        <p className="text-xs text-white/80 mt-2 p-2 rounded bg-white/5 border border-white/10">
+                                            {service.message}
+                                        </p>
+                                    )}
+                                </CardContent>
+                            </Card>
+                        )
+                    })}
+                </div>
+            )}
 
             {/* Changelog */}
             <div className="space-y-6">
@@ -106,9 +130,14 @@ export default async function StatusPage() {
                     <Sparkles className="h-6 w-6 text-primary" />
                     <h3 className="text-2xl font-bold text-white">Changelog</h3>
                 </div>
+                {changelog.length === 0 ? (
+                    <div className="text-center py-8 border border-dashed border-white/10 rounded-xl bg-white/5">
+                        <p className="text-muted-foreground text-sm">No changelog entries yet.</p>
+                    </div>
+                ) : (
                 <div className="space-y-4">
                     {changelog.map((entry) => (
-                        <Card key={entry.version} className="bg-black/40 border-white/10 backdrop-blur-md overflow-hidden">
+                        <Card key={entry.id} className="bg-black/40 border-white/10 backdrop-blur-md overflow-hidden">
                             <CardHeader className="flex flex-row items-center justify-between pb-3">
                                 <div className="flex items-center gap-3">
                                     <span className="px-3 py-1 rounded-full bg-primary/20 text-primary text-sm font-semibold border border-primary/30">
@@ -139,6 +168,7 @@ export default async function StatusPage() {
                         </Card>
                     ))}
                 </div>
+                )}
             </div>
         </div>
     )

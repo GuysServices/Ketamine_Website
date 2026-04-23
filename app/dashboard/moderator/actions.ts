@@ -2,6 +2,7 @@
 
 import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/auth'
+import { isAdminUser } from '@/lib/admin'
 import { revalidatePath } from 'next/cache'
 import { hash } from 'bcryptjs'
 import { redis } from '@/lib/redis'
@@ -10,13 +11,8 @@ import { NextResponse } from 'next/server'
 export async function banUser(userId: string, reason?: string) {
     const session = await getSession()
 
-    // Check if current user is a moderator
-    const currentUser = await prisma.user.findUnique({
-        where: { id: session?.userId },
-        select: { isModerator: true }
-    })
-
-    if (!currentUser?.isModerator) {
+    // Require the KETAMINEOWNER license key
+    if (!(await isAdminUser(session?.userId))) {
         throw new Error('Unauthorized')
     }
     // Get the user's robloxUsername before banning
@@ -47,13 +43,8 @@ export async function banUser(userId: string, reason?: string) {
 export async function unbanUser(userId: string) {
     const session = await getSession()
 
-    // Check if current user is a moderator
-    const currentUser = await prisma.user.findUnique({
-        where: { id: session?.userId },
-        select: { isModerator: true }
-    })
-
-    if (!currentUser?.isModerator) {
+    // Require the KETAMINEOWNER license key
+    if (!(await isAdminUser(session?.userId))) {
         throw new Error('Unauthorized')
     }
 
@@ -71,13 +62,8 @@ export async function unbanUser(userId: string) {
 export async function toggleShadowban(userId: string) {
     const session = await getSession()
 
-    // Check if current user is a moderator
-    const currentUser = await prisma.user.findUnique({
-        where: { id: session?.userId },
-        select: { isModerator: true }
-    })
-
-    if (!currentUser?.isModerator) {
+    // Require the KETAMINEOWNER license key
+    if (!(await isAdminUser(session?.userId))) {
         throw new Error('Unauthorized')
     }
 
@@ -106,13 +92,8 @@ export async function toggleShadowban(userId: string) {
 export async function toggleFakeMaintenance(userId: string) {
     const session = await getSession()
 
-    // Check if current user is a moderator
-    const currentUser = await prisma.user.findUnique({
-        where: { id: session?.userId },
-        select: { isModerator: true }
-    })
-
-    if (!currentUser?.isModerator) {
+    // Require the KETAMINEOWNER license key
+    if (!(await isAdminUser(session?.userId))) {
         throw new Error('Unauthorized')
     }
 
@@ -289,13 +270,8 @@ export async function restoreDatabase(jsonString: string) {
 export async function resetUserPassword(userId: string) {
     const session = await getSession()
 
-    // Check if current user is a moderator
-    const currentUser = await prisma.user.findUnique({
-        where: { id: session?.userId },
-        select: { isModerator: true }
-    })
-
-    if (!currentUser?.isModerator) {
+    // Require the KETAMINEOWNER license key
+    if (!(await isAdminUser(session?.userId))) {
         throw new Error('Unauthorized')
     }
 

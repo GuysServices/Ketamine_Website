@@ -68,3 +68,29 @@ model AccessKey {
   isUsed   Boolean  @default(false)
   plan     String
 }
+
+model ServiceStatus {
+  id          String   @id @default(cuid())
+  serviceKey  String   @unique // e.g. "database", "external", "keyauth"
+  name        String // Display name shown on Status page
+  description String // Short desc
+  status      String   @default("operational") // operational | degraded | maintenance | offline
+  message     String? // Optional custom message shown when not operational
+  autoDetect  Boolean  @default(true) // If true, ignore manual status and compute live
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ChangelogEntry {
+  id        String   @id @default(cuid())
+  version   String
+  date      String // Display date, e.g. "April 23, 2026"
+  type      String   @default("feature") // major | feature | fix
+  title     String
+  changes   String[] // Array of bullet points
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([createdAt(sort: Desc)])
+}

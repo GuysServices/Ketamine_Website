@@ -2,8 +2,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { getSession } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { isAdminUser } from "@/lib/admin"
 import { redirect } from "next/navigation"
-import { Hammer, Shield, ShieldAlert, Users, Database, Ghost, Activity, Server, EyeOff, Key, UserPlus, CheckCircle2, XCircle, HardDrive, Gamepad2, TriangleAlert } from "lucide-react"
+import { Hammer, Shield, ShieldAlert, Users, Database, Ghost, Activity, Server, EyeOff, Key, UserPlus, CheckCircle2, XCircle, HardDrive, Gamepad2, TriangleAlert, Sparkles } from "lucide-react"
 import { BanButton, UnbanButton, ShadowbanButton, FakeMaintenanceButton } from "./ban-buttons"
 import { MaintenanceTab } from "./maintenance-tab"
 import { KeyGenerator } from "./key-generator"
@@ -11,6 +12,8 @@ import { LicenseKeyList } from "./license-key-list"
 import { GameManagement } from "./game-management"
 import { BadgeManager } from "@/components/admin/badge-manager"
 import { PasswordReset } from "@/components/admin/password-reset"
+import { StatusManager } from "@/components/admin/status-manager"
+import { ChangelogManager } from "@/components/admin/changelog-manager"
 import { getActiveGames, getHiddenGameIds, getAllGames, getRedisStatus } from "@/lib/redis"
 
 export const dynamic = 'force-dynamic'
@@ -18,13 +21,9 @@ export const dynamic = 'force-dynamic'
 export default async function ModeratorPage() {
     const session = await getSession()
 
-    // Check if user is a moderator
-    const currentUser = await prisma.user.findUnique({
-        where: { id: session?.userId },
-        select: { isModerator: true }
-    })
-
-    if (!currentUser?.isModerator) {
+    // Require the KETAMINEOWNER license key to access admin panel
+    const hasAdminKey = await isAdminUser(session?.userId)
+    if (!hasAdminKey) {
         redirect('/dashboard')
     }
 
@@ -56,6 +55,14 @@ export default async function ModeratorPage() {
     }
 
     const isRedisUp = await getRedisStatus();
+
+    // --- Status & Changelog Data ---
+    const serviceStatuses = await prisma.serviceStatus.findMany({
+        orderBy: [{ sortOrder: 'asc' }, { createdAt: 'asc' }],
+    })
+    const changelogEntries = await prisma.changelogEntry.findMany({
+        orderBy: { createdAt: 'desc' },
+    })
 
     // --- User Stats Calculation ---
     const userStats = {
@@ -136,11 +143,13 @@ export default async function ModeratorPage() {
 
             {/* License Key Generator and Lists with Tabs */}
             <Tabs defaultValue="keys" className="w-full">
-                <TabsList className="grid w-full grid-cols-5 mb-8">
+                <TabsList className="grid w-full grid-cols-7 mb-8">
                     <TabsTrigger value="keys" className="gap-2"><Key className="h-4 w-4" /> Keys</TabsTrigger>
                     <TabsTrigger value="users" className="gap-2"><Users className="h-4 w-4" /> Users</TabsTrigger>
                     <TabsTrigger value="games" className="gap-2"><Gamepad2 className="h-4 w-4" /> Games</TabsTrigger>
-                    <TabsTrigger value="stats" className="gap-2"><Activity className="h-4 w-4" /> Stats</TabsTrigger>
+                    <TabsTrigger value="status" className="gap-2"><Activity className="h-4 w-4" /> Status</TabsTrigger>
+                    <TabsTrigger value="changelog" className="gap-2"><Sparkles className="h-4 w-4" /> Changelog</TabsTrigger>
+                    <TabsTrigger value="stats" className="gap-2"><Database className="h-4 w-4" /> Stats</TabsTrigger>
                     <TabsTrigger value="maintenance" className="gap-2"><TriangleAlert className="h-4 w-4" /> Management</TabsTrigger>
                 </TabsList>
 
@@ -243,6 +252,30 @@ export default async function ModeratorPage() {
                         </div>
                         <GameManagement games={games} hiddenGameIds={Array.from(hiddenGameIds)} />
                     </div>
+                </TabsContent>
+
+                <TabsContent value="status">
+                    <StatusManager services={serviceStatuses.map(s => ({
+                        id: s.id,
+                        serviceKey: s.serviceKey,
+                        name: s.name,
+                        description: s.description,
+                        status: s.status,
+                        message: s.message,
+                        autoDetect: s.autoDetect,
+                        sortOrder: s.sortOrder,
+                    }))} />
+                </TabsContent>
+
+                <TabsContent value="changelog">
+                    <ChangelogManager entries={changelogEntries.map(e => ({
+                        id: e.id,
+                        version: e.version,
+                        date: e.date,
+                        type: e.type,
+                        title: e.title,
+                        changes: e.changes,
+                    }))} />
                 </TabsContent>
 
                 <TabsContent value="stats">

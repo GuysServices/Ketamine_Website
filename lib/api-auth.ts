@@ -25,10 +25,11 @@ export async function checkModeratorAuth(request: NextRequest) {
     if (session?.userId) {
         const user = await prisma.user.findUnique({
             where: { id: session.userId },
-            select: { isModerator: true }
+            select: { licenseKey: { select: { key: true } } }
         });
 
-        if (user?.isModerator) {
+        // Admin access gated by owning the KETAMINEOWNER license key
+        if (user?.licenseKey?.key === 'KETAMINEOWNER') {
             return { userId: session.userId };
         }
     }
