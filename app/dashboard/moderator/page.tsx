@@ -40,10 +40,19 @@ export default async function ModeratorPage() {
         orderBy: { createdAt: 'desc' }
     })
 
-    // 2. Redis Data
-    const games = await getActiveGames(10); // Active in last 10 mins
-    const allGames = await getAllGames();
-    const hiddenGameIds = await getHiddenGameIds();
+    // 2. Redis Data (tolerate failures so page still loads if Redis is down)
+    let games: Awaited<ReturnType<typeof getActiveGames>> = []
+    let allGames: Awaited<ReturnType<typeof getAllGames>> = []
+    let hiddenGameIds: Awaited<ReturnType<typeof getHiddenGameIds>> = new Set<string>()
+    let isRedisUp = false
+    try {
+        games = await getActiveGames(10)
+        allGames = await getAllGames()
+        hiddenGameIds = await getHiddenGameIds()
+        isRedisUp = await getRedisStatus()
+    } catch (err) {
+        console.error('[moderator] Redis unavailable:', err)
+    }
 
     // --- Health Checks ---
     let isPostgresUp = false;
@@ -53,8 +62,6 @@ export default async function ModeratorPage() {
     } catch {
         isPostgresUp = false;
     }
-
-    const isRedisUp = await getRedisStatus();
 
     // --- Status & Changelog Data ---
     const serviceStatuses = await prisma.serviceStatus.findMany({
