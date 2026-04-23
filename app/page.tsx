@@ -96,7 +96,7 @@ export default function LandingPage() {
           </div>
           
           <div className="flex flex-col sm:flex-row gap-5 w-full justify-center animate-in slide-in-from-bottom-10 fade-in duration-700 delay-300">
-            <Link href="https://discord.gg/rMfSKbSUqt" target="_blank">
+            <Link href="https://discord.gg/S4E467Kf" target="_blank">
               <Button size="lg" variant="glow" className="h-14 px-10 text-lg w-full sm:w-auto hover:bg-white/5 transition-all duration-300 rounded-full group font-semibold">
                 Join Discord <ExternalLink className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Button>
