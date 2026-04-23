@@ -29,7 +29,7 @@ export async function ServiceStatus() {
         {
             name: "External Status",
             icon: Server,
-            status: isRedisAlive,
+            status: true,
             desc: "External Services"
         },
         {
