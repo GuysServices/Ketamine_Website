@@ -1,6 +1,6 @@
 'use client'
 
-import { LayoutDashboard, Gamepad2, LogOut, Settings, User, Hammer, Bell, Book, Palette } from "lucide-react"
+import { LayoutDashboard, Activity, LogOut, Settings, User, Hammer, Bell, Book, Palette } from "lucide-react"
 import Link from "next/link"
 import { useTheme } from "@/components/theme-context"
 import { logout } from "@/app/actions"
@@ -39,7 +39,7 @@ export default function DashboardLayout({
 
     const navItems = [
         { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-        { href: "/dashboard/games", icon: Gamepad2, label: "Games" },
+        { href: "/dashboard/games", icon: Activity, label: "Status" },
         { href: "/dashboard/moderator", icon: Hammer, label: "Moderator", adminOnly: true }, // Protected route
         { href: "/dashboard/rules", icon: Book, label: "Rules" },
         { href: "/dashboard/profile", icon: User, label: "Profile" },
