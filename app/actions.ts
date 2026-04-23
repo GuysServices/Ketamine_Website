@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { redirect } from 'next/navigation'
 import { createSession, deleteSession } from '@/lib/auth'
 import bcrypt from 'bcryptjs'
+import { verifyKeyAuthLicense } from '@/lib/keyauth'
 
 export async function register(prevState: unknown, formData: FormData) {
     const username = formData.get('username') as string
@@ -14,33 +15,20 @@ export async function register(prevState: unknown, formData: FormData) {
         return { error: 'All fields are required' }
     }
 
-    // Validate license key
-    const key = await prisma.licenseKey.findUnique({
-        where: { key: licenseKey },
+    // Verify license key against KeyAuth.cc
+    const verification = await verifyKeyAuthLicense(licenseKey.trim())
+    if (!verification.valid) {
+        return { error: verification.error || 'Invalid license key' }
+    }
+
+    // Check if this license key has already been used to create an account
+    const existingKeyRecord = await prisma.licenseKey.findUnique({
+        where: { key: licenseKey.trim() },
+        include: { user: true }
     })
 
-    console.log('--- DEBUG REGISTRATION ---')
-    console.log('Input Key:', licenseKey)
-    console.log('Found Key:', key)
-
-    if (!key) {
-        return { error: 'Invalid license key' }
-    }
-
-    // Check if key is active
-    console.log('Is Active?', key.isActive)
-    if (!key.isActive) {
-        return { error: 'License key is inactive' }
-    }
-
-    // Check expiration
-    if (key.expiresAt && new Date() > key.expiresAt) {
-        return { error: 'License key has expired' }
-    }
-
-    // Check usage limits
-    if (key.usedCount >= key.maxUses) {
-        return { error: 'License key has reached maximum usage limit' }
+    if (existingKeyRecord?.user) {
+        return { error: 'This license key has already been registered to an account' }
     }
 
     // Check if username already exists (case-insensitive)
@@ -60,39 +48,49 @@ export async function register(prevState: unknown, formData: FormData) {
     // Create user
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    // Check metadata for moderator status
-    const metadata = key.metadata as Record<string, any>
-    const isModerator = metadata?.type === 'moderator'
+    // Pull subscription info from KeyAuth response if available
+    const subscription = verification.info?.subscriptions?.[0]
+    const expiresAt = subscription?.expiry
+        ? new Date(Number(subscription.expiry) * 1000)
+        : null
 
     try {
-        const user = await prisma.user.create({
-            data: {
-                username, // Save exactly as typed for display
-                passwordHash: hashedPassword,
-                isModerator,
-                licenseKey: {
-                    connect: { id: key.id }
-                }
-            }
-        })
-
-        // Update license key usage
-        await prisma.licenseKey.update({
-            where: { id: key.id },
-            data: {
+        // Upsert the license key record locally for tracking (linked to KeyAuth)
+        const keyRecord = await prisma.licenseKey.upsert({
+            where: { key: licenseKey.trim() },
+            create: {
+                key: licenseKey.trim(),
+                isUsed: true,
+                isActive: true,
+                maxUses: 1,
+                usedCount: 1,
+                lastUsedAt: new Date(),
+                expiresAt,
+                metadata: {
+                    source: 'keyauth',
+                    subscription: subscription?.subscription || null,
+                },
+            },
+            update: {
+                isUsed: true,
                 usedCount: { increment: 1 },
                 lastUsedAt: new Date(),
-                // Only mark as fully used if we hit the limit
-                isUsed: key.usedCount + 1 >= key.maxUses,
-                // We don't set userId here because a key might be used by multiple users
-                // The relation is one-to-one in the schema currently which is a problem for multi-use keys
-                // We need to fix the schema relation if we want multi-use keys to work properly with relations
-                // For now, we'll just increment the count
+            },
+        })
+
+        const user = await prisma.user.create({
+            data: {
+                username,
+                passwordHash: hashedPassword,
+                licenseKey: {
+                    connect: { id: keyRecord.id }
+                }
             }
         })
 
         await createSession(user.id)
     } catch (e) {
+        console.error('[Register] Failed:', e)
         return { error: 'Registration failed' }
     }
 
