@@ -13,6 +13,8 @@ import { BadgeManager } from "@/components/admin/badge-manager"
 import { PasswordReset } from "@/components/admin/password-reset"
 import { getActiveGames, getHiddenGameIds, getAllGames, getRedisStatus } from "@/lib/redis"
 
+export const dynamic = 'force-dynamic'
+
 export default async function ModeratorPage() {
     const session = await getSession()
 

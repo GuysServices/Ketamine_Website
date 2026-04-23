@@ -1,6 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { getSession } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+
+export const dynamic = 'force-dynamic'
 import { ServiceStatus } from "@/app/components/service-status"
 import { Button } from "@/components/ui/button"
 import { ExternalLink, Zap, Shield, Activity, User } from "lucide-react"

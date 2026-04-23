@@ -12,7 +12,11 @@ if (!redisUrl) {
 // Create Redis connection with TLS support for Upstash
 function createRedisClient(): Redis {
     if (!redisUrl) {
-        return new Redis('redis://localhost:6379');
+        return new Redis('redis://localhost:6379', {
+            lazyConnect: true,
+            maxRetriesPerRequest: 1,
+            enableOfflineQueue: false,
+        });
     }
 
     // Upstash uses rediss:// for TLS connections
@@ -24,10 +28,14 @@ function createRedisClient(): Redis {
     return new Redis(url, {
         tls: url.startsWith('rediss://') ? {} : undefined,
         maxRetriesPerRequest: 3,
+        lazyConnect: true,
     });
 }
 
 export const redis = globalForRedis.redis || createRedisClient();
+
+// Suppress error spam for missing Redis; individual queries will fail gracefully
+redis.on('error', () => {});
 
 if (process.env.NODE_ENV !== 'production') {
     globalForRedis.redis = redis;

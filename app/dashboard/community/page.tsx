@@ -3,6 +3,8 @@ import { BadgeDisplay } from "@/components/badge-display"
 import { prisma } from "@/lib/prisma"
 import { Users } from "lucide-react"
 
+export const dynamic = 'force-dynamic'
+
 export default async function CommunityPage() {
     // Find the Community MVP badge first
     const mvpBadge = await prisma.badge.findFirst({

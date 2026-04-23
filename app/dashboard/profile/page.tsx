@@ -7,6 +7,8 @@ import { User, Calendar, Key, Shield } from "lucide-react"
 import { UpdateRobloxForm } from "./update-roblox-form"
 import { BadgeDisplay } from "@/components/badge-display"
 
+export const dynamic = 'force-dynamic'
+
 export default async function ProfilePage() {
     const session = await getSession()
 
