@@ -58,11 +58,11 @@ export default function DashboardLayout({
             ">
 
                 {/* Cinematic Ambient Glow Behind */}
-                <div className="absolute -inset-4 bg-blue-500/20 blur-3xl -z-10 rounded-full opacity-0 group-hover:opacity-40 transition-opacity duration-1000" />
+                <div className="absolute -inset-4 bg-primary/20 blur-3xl -z-10 rounded-full opacity-0 group-hover:opacity-40 transition-opacity duration-1000" />
 
                 {/* Logo - Embedded Gem (Hidden on Mobile for Space) */}
                 <div className="relative group/logo cursor-pointer max-md:hidden mb-8">
-                    <div className="absolute inset-0 bg-blue-500 blur-xl opacity-20 group-hover/logo:opacity-50 transition-opacity duration-500" />
+                    <div className="absolute inset-0 bg-primary blur-xl opacity-20 group-hover/logo:opacity-50 transition-opacity duration-500" />
                     <div className="w-12 h-12 rounded-2xl border border-white/10 flex items-center justify-center shadow-inner ring-1 ring-white/10 relative overflow-hidden bg-black/50">
                         <img src="/logo.png" alt="Ketamine Logo" className="w-full h-full object-cover" />
                     </div>
@@ -90,7 +90,7 @@ export default function DashboardLayout({
                             >
                                 {/* Active State Background Blob */}
                                 {isActive && (
-                                    <div className="absolute inset-0 bg-blue-600 rounded-[1.25rem] shadow-[0_0_20px_rgba(37,99,235,0.5)] scale-100 transition-all duration-500 -z-10 animate-in fade-in zoom-in-50" />
+                                    <div className="absolute inset-0 bg-primary rounded-[1.25rem] shadow-[0_0_20px_hsl(var(--primary)/0.5)] scale-100 transition-all duration-500 -z-10 animate-in fade-in zoom-in-50" />
                                 )}
 
                                 {/* Hover Effect for Inactive */}
@@ -108,7 +108,7 @@ export default function DashboardLayout({
 
                                 {/* Active Indicator Dot (Desktop Only) */}
                                 {isActive && (
-                                    <div className="max-md:hidden absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-blue-400 rounded-full blur-[2px] shadow-[0_0_10px_rgba(96,165,250,0.8)]" />
+                                    <div className="max-md:hidden absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-primary rounded-full blur-[2px] shadow-[0_0_10px_hsl(var(--primary)/0.8)]" />
                                 )}
 
                                 {/* Active Indicator Dot (Mobile - Bottom) */}

@@ -27,10 +27,10 @@ export async function ServiceStatus() {
             desc: "PostgreSQL Cluster"
         },
         {
-            name: "Game Management Database",
+            name: "External Status",
             icon: Server,
             status: isRedisAlive,
-            desc: "Valkey / Redis Mesh"
+            desc: "External Services"
         },
         {
             name: "Authentication",

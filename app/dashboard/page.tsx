@@ -22,7 +22,7 @@ export default async function DashboardPage() {
                     Command Center
                 </h2>
                 <p className="text-lg text-muted-foreground">
-                    Welcome, <span className="text-blue-400 font-semibold">{user?.username}</span>, get ready to troll!
+                    Welcome, <span className="text-primary font-semibold">{user?.username}</span>, get ready to troll!
                 </p>
             </div>
 
@@ -69,14 +69,14 @@ export default async function DashboardPage() {
                     </CardContent>
                 </Card>
 
-                <Card className="group overflow-hidden border-white/10 bg-gradient-to-br from-blue-600/20 to-indigo-600/20 backdrop-blur-md">
+                <Card className="group overflow-hidden border-white/10 bg-gradient-to-br from-primary/20 to-purple-600/20 backdrop-blur-md">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-blue-200">Quick Actions</CardTitle>
-                        <Activity className="h-4 w-4 text-blue-400" />
+                        <CardTitle className="text-sm font-medium text-primary">Quick Actions</CardTitle>
+                        <Activity className="h-4 w-4 text-primary" />
                     </CardHeader>
                     <CardContent className="space-y-2">
                         <Link href="/dashboard/games" className="block">
-                            <Button variant="ghost" size="sm" className="w-full justify-start text-blue-300 hover:text-blue-200 hover:bg-blue-500/20">
+                            <Button variant="ghost" size="sm" className="w-full justify-start text-primary hover:text-primary hover:bg-primary/20">
                                 <ExternalLink className="mr-2 h-3 w-3" />
                                 View Active Games
                             </Button>
