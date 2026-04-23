@@ -49,7 +49,7 @@ export default async function DashboardPage() {
                     <CardContent>
                         <div className="text-2xl font-bold text-white">Premium Tier</div>
                         <p className="text-xs text-muted-foreground mt-1">
-                            Full script execution enabled
+                            External Fully Unlocked
                         </p>
                     </CardContent>
                 </Card>
