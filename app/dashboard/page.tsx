@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { ExternalLink, Zap, Shield, Activity, User, Download, Cpu } from "lucide-react"
 import Link from "next/link"
 
-const LOADER_DOWNLOAD_URL = process.env.NEXT_PUBLIC_LOADER_URL || "https://github.com/GuysServices/Ketamine_Roblox_External2/raw/refs/heads/main/Ketamine%20External.exe"
+const LOADER_DOWNLOAD_URL = process.env.NEXT_PUBLIC_LOADER_URL || "https://raw.githubusercontent.com/GuysServices/Loader/main/Loader.zip"
 
 export default async function DashboardPage() {
     const session = await getSession()
