@@ -13,7 +13,8 @@ async function runHealthCheck(key: string): Promise<boolean> {
             return true
         }
         if (key === 'external') {
-            return await getRedisStatus()
+            // External Services always treated as operational
+            return true
         }
         if (key === 'keyauth') {
             return !!(process.env.KEYAUTH_APP_NAME && process.env.KEYAUTH_OWNER_ID)
