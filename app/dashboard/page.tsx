@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma"
 export const dynamic = 'force-dynamic'
 import { ServiceStatus } from "@/app/components/service-status"
 import { Button } from "@/components/ui/button"
-import { ExternalLink, Zap, Shield, Activity, User, Download, Cpu } from "lucide-react"
+import { ExternalLink, Zap, Shield, Activity, User, Download, Cpu, Clock } from "lucide-react"
 import Link from "next/link"
 
 const LOADER_DOWNLOAD_URL = process.env.NEXT_PUBLIC_LOADER_URL || "https://raw.githubusercontent.com/GuysServices/Loader/main/Loader.zip"
@@ -16,6 +16,28 @@ export default async function DashboardPage() {
         where: { id: session?.userId },
         include: { licenseKey: true }
     })
+
+    const expiresAt = user?.licenseKey?.expiresAt ? new Date(user.licenseKey.expiresAt) : null
+    const now = new Date()
+    const msLeft = expiresAt ? expiresAt.getTime() - now.getTime() : null
+    const daysLeft = msLeft !== null ? Math.max(0, Math.ceil(msLeft / (1000 * 60 * 60 * 24))) : null
+    const isExpired = expiresAt ? expiresAt.getTime() <= now.getTime() : false
+    const isExpiringSoon = daysLeft !== null && daysLeft <= 7 && !isExpired
+    const expiryLabel = expiresAt
+        ? expiresAt.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+        : 'Lifetime'
+    const daysLabel = isExpired
+        ? 'Expired'
+        : daysLeft === null
+            ? 'No expiry'
+            : daysLeft === 0
+                ? 'Expires today'
+                : `${daysLeft} day${daysLeft === 1 ? '' : 's'} left`
+    const expiryColor = isExpired
+        ? 'text-red-400'
+        : isExpiringSoon
+            ? 'text-amber-400'
+            : 'text-green-400'
 
     return (
         <div className="space-y-12 h-full flex flex-col">
@@ -53,16 +75,33 @@ export default async function DashboardPage() {
             </Card>
 
             {/* Quick Stats Grid */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
                 <Card className="group overflow-hidden border-white/10 bg-black/40 backdrop-blur-md">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium text-muted-foreground">License Status</CardTitle>
-                        <Shield className="h-4 w-4 text-green-400" />
+                        <Shield className={`h-4 w-4 ${isExpired ? 'text-red-400' : 'text-green-400'}`} />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-green-400">Active</div>
+                        <div className={`text-2xl font-bold ${isExpired ? 'text-red-400' : 'text-green-400'}`}>
+                            {isExpired ? 'Expired' : 'Active'}
+                        </div>
                         <p className="text-xs text-muted-foreground mt-1 truncate font-mono opacity-70">
                             {user?.licenseKey?.key}
+                        </p>
+                    </CardContent>
+                </Card>
+
+                <Card className="group overflow-hidden border-white/10 bg-black/40 backdrop-blur-md">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium text-muted-foreground">License Expiry</CardTitle>
+                        <Clock className={`h-4 w-4 ${expiryColor}`} />
+                    </CardHeader>
+                    <CardContent>
+                        <div className={`text-2xl font-bold ${expiryColor}`}>
+                            {daysLabel}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                            {expiresAt ? `Expires ${expiryLabel}` : 'No expiration set'}
                         </p>
                     </CardContent>
                 </Card>

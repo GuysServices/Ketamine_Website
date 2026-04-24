@@ -3,7 +3,8 @@
 import { useTheme } from "@/components/theme-context"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
-import { Monitor, Eye, EyeOff, ShieldAlert } from "lucide-react"
+import { Monitor, Eye, EyeOff, ShieldAlert, KeyRound } from "lucide-react"
+import { RedeemKeyForm } from "@/components/redeem-key-form"
 
 export default function SettingsPage() {
     const { streamerMode, setStreamerMode } = useTheme()
@@ -16,6 +17,24 @@ export default function SettingsPage() {
             </div>
 
             <div className="grid gap-6">
+                {/* License Key Card */}
+                <section className="bg-card/50 backdrop-blur-xl border border-white/10 rounded-[2rem] p-8 space-y-6">
+                    <div className="flex items-center gap-4 mb-2">
+                        <div className="p-3 rounded-2xl bg-purple-500/20 text-purple-400">
+                            <KeyRound className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <h2 className="text-xl font-bold text-white">License Key</h2>
+                            <p className="text-slate-400 text-sm">
+                                Redeem a new KeyAuth license without creating a new account.
+                            </p>
+                        </div>
+                    </div>
+                    <div className="p-4 rounded-xl bg-white/5 border border-white/5">
+                        <RedeemKeyForm />
+                    </div>
+                </section>
+
                 {/* Privacy & Streaming Card */}
                 <section className="bg-card/50 backdrop-blur-xl border border-white/10 rounded-[2rem] p-8 space-y-6">
                     <div className="flex items-center gap-4 mb-6">
