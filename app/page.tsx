@@ -124,12 +124,14 @@ export default function LandingPage() {
             <AccountCard
               tier="30+ Day ALT"
               variantId={1109441}
+              quantity={4}
               description="Fresh ALT accounts aged 30+ days. Great for quick uses & burner needs."
               accent="from-purple-600 to-purple-600"
             />
             <AccountCard
               tier="90+ Days Old"
               variantId={1109442}
+              quantity={4}
               description="Accounts aged 90+ days. Better trust score, ideal for daily play."
               accent="from-purple-600 to-purple-600"
               highlight
@@ -137,6 +139,7 @@ export default function LandingPage() {
             <AccountCard
               tier="Aged 100-350 Days"
               variantId={1109443}
+              quantity={1}
               description="Premium aged accounts (100-350 days). Highest trust tier we offer."
               accent="from-yellow-600 to-yellow-600"
             />
@@ -194,12 +197,14 @@ export default function LandingPage() {
 function AccountCard({
   tier,
   variantId,
+  quantity,
   description,
   accent,
   highlight,
 }: {
   tier: string
   variantId: number
+  quantity: number
   description: string
   accent: string
   highlight?: boolean
@@ -225,7 +230,7 @@ function AccountCard({
       </CardHeader>
       <CardContent className="pt-2">
         <SellAuthButton
-          cart={[{ productId: 696068, variantId, quantity: 1 }]}
+          cart={[{ productId: 696068, variantId, quantity }]}
           shopId={232656}
           modal={true}
           className={`w-full h-12 rounded-xl font-bold text-white bg-gradient-to-r ${accent} shadow-purple-glow hover:scale-[1.02] transition-transform duration-300 flex items-center justify-center gap-2`}
