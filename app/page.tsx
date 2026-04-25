@@ -18,6 +18,9 @@ export default function LandingPage() {
           <Link href="/rulebook">
             <Button variant="ghost" className="rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all duration-300">Rules</Button>
           </Link>
+          <Link href="/robux">
+            <Button variant="ghost" className="rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all duration-300">Robux</Button>
+          </Link>
                     <Link href="/login">
             <Button variant="ghost" className="rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all duration-300">Login</Button>
           </Link>
