@@ -104,6 +104,45 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* Roblox Accounts Section */}
+        <section id="accounts" className="container mx-auto px-4 pb-24 relative z-10 w-full max-w-6xl">
+          <div className="text-center mb-10 animate-in slide-in-from-bottom-5 fade-in duration-700">
+            <div className="inline-flex items-center rounded-full border border-purple-500/30 bg-purple-500/10 px-3 py-1 text-sm font-medium text-purple-300 mb-4 backdrop-blur-sm">
+              <span className="flex h-2 w-2 rounded-full bg-purple-500 mr-2 animate-pulse"></span>
+              Aged Accounts In Stock
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-3">
+              <span className="text-white">Buy </span>
+              <span className="bg-gradient-to-r from-purple-400 via-purple-500 to-purple-600 bg-clip-text text-transparent">Roblox Accounts</span>
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Hand-aged Roblox accounts ready for instant delivery. Pick a tier below and check out securely via SellAuth.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in slide-in-from-bottom-8 fade-in duration-700 delay-100">
+            <AccountCard
+              tier="30+ Day ALT"
+              variantId={1109441}
+              description="Fresh ALT accounts aged 30+ days. Great for quick uses & burner needs."
+              accent="from-purple-600 to-purple-600"
+            />
+            <AccountCard
+              tier="90+ Days Old"
+              variantId={1109442}
+              description="Accounts aged 90+ days. Better trust score, ideal for daily play."
+              accent="from-purple-600 to-purple-600"
+              highlight
+            />
+            <AccountCard
+              tier="Aged 100-350 Days"
+              variantId={1109443}
+              description="Premium aged accounts (100-350 days). Highest trust tier we offer."
+              accent="from-yellow-600 to-yellow-600"
+            />
+          </div>
+        </section>
+
         {/* Features Grid */}
         <section className="container mx-auto px-4 pb-32 relative z-10 w-full max-w-6xl">
           <div className="grid gap-8 md:grid-cols-3">
@@ -149,6 +188,53 @@ export default function LandingPage() {
         </div>
       </footer>
     </div>
+  )
+}
+
+function AccountCard({
+  tier,
+  variantId,
+  description,
+  accent,
+  highlight,
+}: {
+  tier: string
+  variantId: number
+  description: string
+  accent: string
+  highlight?: boolean
+}) {
+  return (
+    <Card
+      className={`group relative overflow-hidden border-white/5 bg-white/5 hover:bg-white/10 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-900/20 ${
+        highlight ? "ring-2 ring-purple-500/50" : ""
+      }`}
+    >
+      {highlight && (
+        <div className="absolute top-3 right-3 rounded-full bg-purple-500/20 border border-purple-500/40 px-2 py-0.5 text-[10px] font-semibold text-purple-300">
+          POPULAR
+        </div>
+      )}
+      <CardHeader>
+        <CardTitle className="text-2xl text-white group-hover:text-purple-300 transition-colors">
+          {tier}
+        </CardTitle>
+        <CardDescription className="text-muted-foreground/80 leading-relaxed">
+          {description}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="pt-2">
+        <SellAuthButton
+          cart={[{ productId: 696068, variantId, quantity: 1 }]}
+          shopId={232656}
+          modal={true}
+          className={`w-full h-12 rounded-xl font-bold text-white bg-gradient-to-r ${accent} shadow-purple-glow hover:scale-[1.02] transition-transform duration-300 flex items-center justify-center gap-2`}
+        >
+          <Check className="h-4 w-4" />
+          <span>Purchase</span>
+        </SellAuthButton>
+      </CardContent>
+    </Card>
   )
 }
 
