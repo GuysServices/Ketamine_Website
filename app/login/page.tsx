@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState } from 'react'
+import { Suspense, useActionState } from 'react'
 import { login } from '@/app/actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -8,14 +8,13 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from 'next/link'
 import Turnstile from 'react-turnstile'
-import { useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 
 const initialState = {
     error: '',
 }
 
-export default function LoginPage() {
+function LoginPageInner() {
     const [state, formAction, isPending] = useActionState(login, initialState)
     const searchParams = useSearchParams()
     const justReset = searchParams?.get('reset') === '1'
@@ -75,5 +74,13 @@ export default function LoginPage() {
                 </form>
             </Card>
         </div>
+    )
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={null}>
+            <LoginPageInner />
+        </Suspense>
     )
 }
