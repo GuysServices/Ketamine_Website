@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import Link from 'next/link'
 import Turnstile from 'react-turnstile'
 import { useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 
 const initialState = {
     error: '',
@@ -16,6 +17,9 @@ const initialState = {
 
 export default function LoginPage() {
     const [state, formAction, isPending] = useActionState(login, initialState)
+    const searchParams = useSearchParams()
+    const justReset = searchParams?.get('reset') === '1'
+    const isDev = process.env.NODE_ENV !== 'production'
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-background p-4">
@@ -35,16 +39,22 @@ export default function LoginPage() {
                             <Input id="password" name="password" type="password" required />
                         </div>
 
-                        <div className="flex justify-center py-2">
-                            <Turnstile
-                                sitekey={process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY || ""}
-                                onVerify={(token) => {
-                                    const input = document.getElementById('cf-turnstile-response') as HTMLInputElement
-                                    if (input) input.value = token
-                                }}
-                            />
-                            <input type="hidden" name="cf-turnstile-response" id="cf-turnstile-response" />
-                        </div>
+                        {!isDev && (
+                            <div className="flex justify-center py-2">
+                                <Turnstile
+                                    sitekey={process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY || ""}
+                                    onVerify={(token) => {
+                                        const input = document.getElementById('cf-turnstile-response') as HTMLInputElement
+                                        if (input) input.value = token
+                                    }}
+                                />
+                                <input type="hidden" name="cf-turnstile-response" id="cf-turnstile-response" />
+                            </div>
+                        )}
+
+                        {justReset && !state?.error && (
+                            <p className="text-sm text-green-400">Password reset successful. Please sign in with your new password.</p>
+                        )}
 
                         {state?.error && (
                             <p className="text-sm text-destructive">{state.error}</p>
@@ -55,6 +65,9 @@ export default function LoginPage() {
                             {isPending ? 'Logging in...' : 'Login'}
                         </Button>
 
+                        <p className="text-sm text-muted-foreground text-center">
+                            <Link href="/login/forgot" className="text-primary hover:underline">Forgot password?</Link>
+                        </p>
                         <p className="text-sm text-muted-foreground text-center">
                             Don't have an account? <Link href="/register" className="text-primary hover:underline">Redeem Key</Link>
                         </p>

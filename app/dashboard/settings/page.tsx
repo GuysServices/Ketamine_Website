@@ -3,8 +3,10 @@
 import { useTheme } from "@/components/theme-context"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
-import { Monitor, Eye, EyeOff, ShieldAlert, KeyRound } from "lucide-react"
+import { Monitor, Eye, EyeOff, ShieldAlert, KeyRound, Lock, MessageSquare } from "lucide-react"
 import { RedeemKeyForm } from "@/components/redeem-key-form"
+import { ChangePasswordForm } from "@/components/change-password-form"
+import { DiscordLinkForm } from "@/components/discord-link-form"
 
 export default function SettingsPage() {
     const { streamerMode, setStreamerMode } = useTheme()
@@ -32,6 +34,42 @@ export default function SettingsPage() {
                     </div>
                     <div className="p-4 rounded-xl bg-white/5 border border-white/5">
                         <RedeemKeyForm />
+                    </div>
+                </section>
+
+                {/* Discord Link Card */}
+                <section className="bg-card/50 backdrop-blur-xl border border-white/10 rounded-[2rem] p-8 space-y-6">
+                    <div className="flex items-center gap-4 mb-2">
+                        <div className="p-3 rounded-2xl bg-[#5865F2]/20 text-[#5865F2]">
+                            <MessageSquare className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <h2 className="text-xl font-bold text-white">Discord Account</h2>
+                            <p className="text-slate-400 text-sm">
+                                Link your Discord so you can receive password reset codes via DM.
+                            </p>
+                        </div>
+                    </div>
+                    <div className="p-4 rounded-xl bg-white/5 border border-white/5">
+                        <DiscordLinkForm />
+                    </div>
+                </section>
+
+                {/* Change Password Card */}
+                <section className="bg-card/50 backdrop-blur-xl border border-white/10 rounded-[2rem] p-8 space-y-6">
+                    <div className="flex items-center gap-4 mb-2">
+                        <div className="p-3 rounded-2xl bg-red-500/20 text-red-400">
+                            <Lock className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <h2 className="text-xl font-bold text-white">Change Password</h2>
+                            <p className="text-slate-400 text-sm">
+                                Update the password used to sign in to your account.
+                            </p>
+                        </div>
+                    </div>
+                    <div className="p-4 rounded-xl bg-white/5 border border-white/5">
+                        <ChangePasswordForm />
                     </div>
                 </section>
 

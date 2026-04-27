@@ -102,22 +102,28 @@ export async function login(prevState: unknown, formData: FormData) {
     const password = formData.get('password') as string
     const turnstileToken = formData.get('cf-turnstile-response') as string
 
-    if (!turnstileToken) {
-        return { error: 'Please complete the Turnstile challenge' }
-    }
+    // Skip Turnstile in development so local testing works even when the
+    // Cloudflare widget can't load.
+    const isDev = process.env.NODE_ENV !== 'production'
 
-    // Verify Turnstile
-    const verifyFormData = new URLSearchParams()
-    verifyFormData.append('secret', process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY || "")
-    verifyFormData.append('response', turnstileToken)
+    if (!isDev) {
+        if (!turnstileToken) {
+            return { error: 'Please complete the Turnstile challenge' }
+        }
 
-    const turnstileRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-        method: 'POST',
-        body: verifyFormData,
-    }).then(res => res.json())
+        // Verify Turnstile
+        const verifyFormData = new URLSearchParams()
+        verifyFormData.append('secret', process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY || "")
+        verifyFormData.append('response', turnstileToken)
 
-    if (!turnstileRes.success) {
-        return { error: 'Turnstile verification failed' }
+        const turnstileRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+            method: 'POST',
+            body: verifyFormData,
+        }).then(res => res.json())
+
+        if (!turnstileRes.success) {
+            return { error: 'Turnstile verification failed' }
+        }
     }
 
     const user = await prisma.user.findFirst({

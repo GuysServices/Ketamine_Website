@@ -7,7 +7,6 @@ import { redirect } from "next/navigation"
 import { Hammer, Shield, ShieldAlert, Users, Database, Ghost, Activity, Server, EyeOff, Key, UserPlus, CheckCircle2, XCircle, HardDrive, Gamepad2, TriangleAlert, Sparkles } from "lucide-react"
 import { BanButton, UnbanButton, ShadowbanButton, FakeMaintenanceButton } from "./ban-buttons"
 import { MaintenanceTab } from "./maintenance-tab"
-import { KeyGenerator } from "./key-generator"
 import { LicenseKeyList } from "./license-key-list"
 import { GameManagement } from "./game-management"
 import { BadgeManager } from "@/components/admin/badge-manager"
@@ -161,7 +160,6 @@ export default async function ModeratorPage() {
                 </TabsList>
 
                 <TabsContent value="keys" className="space-y-8">
-                    <KeyGenerator />
                     <LicenseKeyList keys={serializedKeys} />
                 </TabsContent>
 
