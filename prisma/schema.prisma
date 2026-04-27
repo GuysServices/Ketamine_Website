@@ -37,18 +37,65 @@ model Badge {
 }
 
 model LicenseKey {
-  id         String    @id @default(cuid())
-  key        String    @unique
-  isUsed     Boolean   @default(false)
-  maxUses    Int       @default(1)
-  usedCount  Int       @default(0)
-  isActive   Boolean   @default(true)
-  expiresAt  DateTime?
-  lastUsedAt DateTime?
-  metadata   Json      @default("{}")
-  userId     String?   @unique
-  createdAt  DateTime  @default(now())
-  user       User?     @relation(fields: [userId], references: [id])
+  id          String    @id @default(cuid())
+  key         String    @unique
+  isUsed      Boolean   @default(false)
+  maxUses     Int       @default(1)
+  usedCount   Int       @default(0)
+  isActive    Boolean   @default(true)
+  expiresAt   DateTime?
+  lastUsedAt  DateTime?
+  metadata    Json      @default("{}")
+  userId      String?   @unique
+  createdAt   DateTime  @default(now())
+  user        User?     @relation(fields: [userId], references: [id])
+
+  // Reseller-issued key tracking
+  resellerId  String?
+  reseller    Reseller? @relation(fields: [resellerId], references: [id], onDelete: SetNull)
+  plan        String?   // "daily" | "weekly" | "monthly" | "lifetime"
+  creditsCost Int       @default(0)
+
+  @@index([resellerId])
+}
+
+model Reseller {
+  id          String       @id @default(cuid())
+  discordId   String       @unique
+  username    String
+  avatar      String?
+  credits     Int          @default(0)
+  totalSpent  Int          @default(0)
+  isActive    Boolean      @default(true)
+  notes       String?
+
+  // Tier system (auto-promoted by totalSpent unless manualTier=true)
+  tier        String       @default("bronze") // "bronze" | "silver" | "gold"
+  manualTier  Boolean      @default(false)
+
+  // Profile customization
+  displayName String?
+  bannerColor String?
+  paymentInfo String?  // free-form text (Discord tag, PayPal link, etc.)
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  keys        LicenseKey[]
+
+  @@index([discordId])
+}
+
+model ResellerLedger {
+  id          String   @id @default(cuid())
+  resellerId  String
+  delta       Int      // +N for top-up, -N for spend, can be negative for refunds reversal
+  reason      String   // "topup" | "spend" | "refund" | "adjustment"
+  note        String?  // admin note or "Generated 30-day key (abc123)"
+  balanceAfter Int
+  createdAt   DateTime @default(now())
+
+  @@index([resellerId])
+  @@index([createdAt(sort: Desc)])
 }
 
 model Whitelist {

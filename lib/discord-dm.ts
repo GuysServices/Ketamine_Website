@@ -1,10 +1,23 @@
+export interface DiscordEmbed {
+    title?: string
+    description?: string
+    color?: number
+    fields?: Array<{ name: string; value: string; inline?: boolean }>
+    footer?: { text: string }
+    timestamp?: string
+}
+
 /**
- * Sends a direct message to a Discord user via the bot token.
+ * Sends a direct message (with optional embeds) to a Discord user via the bot token.
  * Requires DISCORD_BOT_TOKEN env var, and the bot must share at least
  * one server with the target user (and the user must allow DMs from
  * server members).
  */
-export async function sendDiscordDM(discordUserId: string, content: string): Promise<void> {
+export async function sendDiscordDM(
+    discordUserId: string,
+    content: string,
+    embeds?: DiscordEmbed[],
+): Promise<void> {
     const token = process.env.DISCORD_BOT_TOKEN
     if (!token) {
         console.warn('[discord-dm] DISCORD_BOT_TOKEN not configured. Skipping DM.')
@@ -37,7 +50,7 @@ export async function sendDiscordDM(discordUserId: string, content: string): Pro
             Authorization: `Bot ${token}`,
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ content }),
+        body: JSON.stringify({ content, ...(embeds && embeds.length ? { embeds } : {}) }),
     })
 
     if (!msgRes.ok) {

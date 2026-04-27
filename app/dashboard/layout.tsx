@@ -1,6 +1,6 @@
 'use client'
 
-import { LayoutDashboard, Activity, LogOut, Settings, User, Hammer, Bell, Book, Palette } from "lucide-react"
+import { LayoutDashboard, Activity, LogOut, Settings, User, Hammer, Book, Palette, Coins } from "lucide-react"
 import Link from "next/link"
 import { useTheme } from "@/components/theme-context"
 import { logout } from "@/app/actions"
@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation"
 import { useEffect } from "react"
 import { cn } from "@/lib/utils"
 import { ThemeBrowser } from "@/components/theme-browser"
+import { ChangelogBell } from "@/components/changelog-bell"
 import { useState } from "react"
 
 
@@ -42,17 +43,18 @@ export default function DashboardLayout({
         { href: "/dashboard/games", icon: Activity, label: "Status" },
         { href: "/dashboard/moderator", icon: Hammer, label: "Moderator", adminOnly: true }, // Protected route
         { href: "/dashboard/rules", icon: Book, label: "Rules" },
+        { href: "/resellers", icon: Coins, label: "Resellers" },
         { href: "/dashboard/profile", icon: User, label: "Profile" },
     ]
 
     return (
         <div className="flex min-h-screen bg-background text-foreground font-sans selection:bg-primary/20 relative overflow-hidden">
             <NateWatermark />
-            {/* Ultra-Premium Glass Dock */}
+            {/* Ultra-Premium Glass Dock — expands on hover (desktop) to show labels */}
             <aside className="
-                fixed z-50 rounded-[2.5rem] border border-white/10 bg-card/75 backdrop-blur-xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] transition-all duration-500 hover:scale-[1.02] group ring-1 ring-white/5 overflow-visible flex items-center
+                fixed z-50 rounded-[2.5rem] border border-white/10 bg-card/75 backdrop-blur-xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] transition-all duration-500 group ring-1 ring-white/5 overflow-visible flex items-center
                 
-                md:left-8 md:top-1/2 md:-translate-y-1/2 md:h-fit md:w-[5.5rem] md:flex-col md:py-8 md:gap-0
+                md:left-8 md:top-1/2 md:-translate-y-1/2 md:h-fit md:w-[5.5rem] md:hover:w-[15rem] md:flex-col md:py-8 md:gap-0 md:items-stretch md:px-3
                 
                 max-md:bottom-6 max-md:left-1/2 max-md:-translate-x-1/2 max-md:w-[90%] max-md:h-20 max-md:flex-row max-md:justify-between max-md:px-6 max-md:bg-card/90
             ">
@@ -61,27 +63,31 @@ export default function DashboardLayout({
                 <div className="absolute -inset-4 bg-primary/20 blur-3xl -z-10 rounded-full opacity-0 group-hover:opacity-40 transition-opacity duration-1000" />
 
                 {/* Logo - Embedded Gem (Hidden on Mobile for Space) */}
-                <div className="relative group/logo cursor-pointer max-md:hidden mb-8">
-                    <div className="absolute inset-0 bg-primary blur-xl opacity-20 group-hover/logo:opacity-50 transition-opacity duration-500" />
-                    <div className="w-12 h-12 rounded-2xl border border-white/10 flex items-center justify-center shadow-inner ring-1 ring-white/10 relative overflow-hidden bg-black/50">
+                <div className="relative group/logo cursor-pointer max-md:hidden mb-8 flex items-center gap-3 justify-start pl-1">
+                    <div className="absolute -inset-2 bg-primary blur-xl opacity-20 group-hover/logo:opacity-50 transition-opacity duration-500" />
+                    <div className="w-12 h-12 flex-shrink-0 rounded-2xl border border-white/10 flex items-center justify-center shadow-inner ring-1 ring-white/10 relative overflow-hidden bg-black/50">
                         <img src="/logo.png" alt="Ketamine Logo" className="w-full h-full object-cover" />
                     </div>
+                    <span className="font-bold text-lg whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 max-md:hidden">
+                        Ketamine
+                    </span>
                 </div>
 
                 {/* Separator (Desktop) */}
-                <div className="max-md:hidden w-8 h-[1px] bg-white/10 mb-8" />
+                <div className="max-md:hidden h-[1px] bg-white/10 mb-8 mx-2" />
 
                 {/* Navigation Pucks */}
-                <nav className="flex md:flex-col gap-6 w-full items-center justify-center max-md:flex-row max-md:gap-1">
+                <nav className="flex md:flex-col md:gap-2 gap-6 w-full items-center md:items-stretch justify-center max-md:flex-row max-md:gap-1">
                     {navItems.map((item) => {
                         const isActive = pathname === item.href
-                        const Icon = item.icon
                         return (
                             <Link
                                 key={item.href}
                                 href={item.href}
                                 className={cn(
-                                    "relative w-12 h-12 rounded-[1.25rem] flex items-center justify-center transition-all duration-500 group/item overflow-visible",
+                                    "relative h-12 rounded-[1.25rem] flex items-center transition-all duration-500 group/item overflow-visible",
+                                    "max-md:w-12 max-md:justify-center",
+                                    "md:w-full md:px-3 md:gap-3 md:justify-start",
                                     isActive
                                         ? "text-white"
                                         : "text-slate-400 hover:text-white"
@@ -100,11 +106,16 @@ export default function DashboardLayout({
 
                                 <item.icon
                                     className={cn(
-                                        "w-6 h-6 transition-transform duration-300 group-hover/item:scale-110",
+                                        "w-6 h-6 flex-shrink-0 transition-transform duration-300 group-hover/item:scale-110",
                                         dualToneIcons && "fill-primary/20"
                                     )}
                                     strokeWidth={isActive ? 2.5 : 2}
                                 />
+
+                                {/* Label (only shown when sidebar is expanded on hover) */}
+                                <span className="max-md:hidden whitespace-nowrap font-medium opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                                    {item.label}
+                                </span>
 
                                 {/* Active Indicator Dot (Desktop Only) */}
                                 {isActive && (
@@ -121,57 +132,74 @@ export default function DashboardLayout({
                 </nav>
 
                 {/* Bottom Actions Container */}
-                <div className="flex md:flex-col gap-5 w-full items-center md:mt-8 max-md:w-auto max-md:flex-row">
+                <div className="flex md:flex-col md:gap-2 gap-5 md:w-full items-center md:items-stretch md:mt-8 max-md:w-auto max-md:flex-row">
                     {/* Separator (Desktop) */}
-                    <div className="max-md:hidden w-8 h-[1px] bg-white/10" />
+                    <div className="max-md:hidden h-[1px] bg-white/10 mx-2" />
 
-                    {/* Settings Link (Moved to Bottom) */}
+                    {/* Settings Link */}
                     <Link
                         href="/dashboard/settings"
-                        className="relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 group/settings"
+                        className={cn(
+                            "relative h-12 rounded-[1.25rem] flex items-center transition-all duration-300 group/settings",
+                            "max-md:w-12 max-md:justify-center max-md:rounded-full max-md:h-10",
+                            "md:w-full md:px-3 md:gap-3 md:justify-start"
+                        )}
                         title="Settings"
                     >
                         <div className={cn(
-                            "absolute inset-0 rounded-full transition-all duration-300",
+                            "absolute inset-0 rounded-[1.25rem] max-md:rounded-full transition-all duration-300",
                             pathname === "/dashboard/settings" ? "bg-white/10" : "scale-0 group-hover/settings:scale-100 bg-white/5"
                         )} />
                         <Settings
                             className={cn(
-                                "h-5 w-5 transition-all duration-500 group-hover/settings:rotate-90",
+                                "h-5 w-5 flex-shrink-0 transition-all duration-500 group-hover/settings:rotate-90",
                                 pathname === "/dashboard/settings" ? "text-white" : "text-slate-400 group-hover/settings:text-white",
                                 dualToneIcons && "fill-primary/20"
                             )}
                         />
+                        <span className="max-md:hidden whitespace-nowrap text-sm font-medium text-slate-300 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                            Settings
+                        </span>
                     </Link>
 
-                    {/* Integrated Notification Bell */}
-                    <div className="relative group/bell w-10 h-10 flex items-center justify-center cursor-pointer">
-                        <div className="absolute inset-0 bg-white/5 rounded-full scale-0 group-hover/bell:scale-100 transition-transform duration-300" />
-                        <Bell className="h-5 w-5 text-slate-400 group-hover/bell:text-white transition-colors duration-300" />
-                        <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-[#0f0f1e] animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]" />
-                    </div>
+                    {/* Changelog Bell */}
+                    <ChangelogBell />
 
-                    {/* Theme Browser Trigger */}
+                    {/* Theme Browser */}
                     <button
                         onClick={() => setThemeBrowserOpen(true)}
-                        className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 group/theme relative"
+                        className={cn(
+                            "relative group/theme h-12 rounded-[1.25rem] flex items-center transition-all duration-300",
+                            "max-md:w-10 max-md:h-10 max-md:rounded-full max-md:justify-center",
+                            "md:w-full md:px-3 md:gap-3 md:justify-start"
+                        )}
                         title="Change Theme"
                     >
-                        <div className="absolute inset-0 bg-primary/0 group-hover/theme:bg-primary/20 rounded-full transition-colors duration-300" />
-                        <Palette className="h-5 w-5 text-slate-400 group-hover/theme:text-primary transition-colors duration-300" />
+                        <div className="absolute inset-0 bg-primary/0 group-hover/theme:bg-primary/20 rounded-[1.25rem] max-md:rounded-full transition-colors duration-300" />
+                        <Palette className="h-5 w-5 flex-shrink-0 text-slate-400 group-hover/theme:text-primary transition-colors duration-300" />
+                        <span className="max-md:hidden whitespace-nowrap text-sm font-medium text-slate-300 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                            Theme
+                        </span>
                     </button>
 
                     {/* Separator (Mobile) */}
                     <div className="md:hidden w-[1px] h-8 bg-white/10" />
 
-                    <form action={logout}>
+                    <form action={logout} className="md:w-full">
                         <button
                             type="submit"
-                            className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 group/logout relative"
+                            className={cn(
+                                "relative group/logout h-12 rounded-[1.25rem] flex items-center transition-all duration-300",
+                                "max-md:w-10 max-md:h-10 max-md:rounded-full max-md:justify-center",
+                                "md:w-full md:px-3 md:gap-3 md:justify-start"
+                            )}
                             title="Logout"
                         >
-                            <div className="absolute inset-0 bg-red-500/0 group-hover/logout:bg-red-500/10 rounded-full transition-colors duration-300" />
-                            <LogOut className="h-5 w-5 text-slate-500 group-hover/logout:text-red-400 transition-colors duration-300" strokeWidth={2} />
+                            <div className="absolute inset-0 bg-red-500/0 group-hover/logout:bg-red-500/10 rounded-[1.25rem] max-md:rounded-full transition-colors duration-300" />
+                            <LogOut className="h-5 w-5 flex-shrink-0 text-slate-500 group-hover/logout:text-red-400 transition-colors duration-300" strokeWidth={2} />
+                            <span className="max-md:hidden whitespace-nowrap text-sm font-medium text-slate-300 group-hover/logout:text-red-400 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                                Logout
+                            </span>
                         </button>
                     </form>
                 </div>

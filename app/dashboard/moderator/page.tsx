@@ -4,7 +4,7 @@ import { getSession } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { isAdminUser } from "@/lib/admin"
 import { redirect } from "next/navigation"
-import { Hammer, Shield, ShieldAlert, Users, Database, Ghost, Activity, Server, EyeOff, Key, UserPlus, CheckCircle2, XCircle, HardDrive, Gamepad2, TriangleAlert, Sparkles } from "lucide-react"
+import { Hammer, Shield, ShieldAlert, Users, Database, Ghost, Activity, Server, EyeOff, Key, UserPlus, CheckCircle2, XCircle, HardDrive, Gamepad2, TriangleAlert, Sparkles, Coins, Package, Radio } from "lucide-react"
 import { BanButton, UnbanButton, ShadowbanButton, FakeMaintenanceButton } from "./ban-buttons"
 import { MaintenanceTab } from "./maintenance-tab"
 import { LicenseKeyList } from "./license-key-list"
@@ -13,6 +13,11 @@ import { BadgeManager } from "@/components/admin/badge-manager"
 import { PasswordReset } from "@/components/admin/password-reset"
 import { StatusManager } from "@/components/admin/status-manager"
 import { ChangelogManager } from "@/components/admin/changelog-manager"
+import { ResellerManager } from "@/components/admin/reseller-manager"
+import { StockManager } from "@/components/admin/stock-manager"
+import { getStockCounts } from "@/app/actions/admin-stock"
+import { ActivityFeed } from "@/components/admin/activity-feed"
+import { getRecentActivity } from "@/app/actions/admin-activity"
 import { getActiveGames, getHiddenGameIds, getAllGames, getRedisStatus } from "@/lib/redis"
 
 export const dynamic = 'force-dynamic'
@@ -69,6 +74,35 @@ export default async function ModeratorPage() {
     const changelogEntries = await prisma.changelogEntry.findMany({
         orderBy: { createdAt: 'desc' },
     })
+
+    // Stock counts per plan
+    const stockCounts = await getStockCounts()
+
+    // Initial activity feed (will hot-refresh on the client)
+    const initialActivity = await getRecentActivity(50)
+
+    // Resellers with key counts
+    const resellersRaw = await prisma.reseller.findMany({
+        orderBy: { createdAt: 'desc' },
+        include: {
+            keys: { select: { id: true, isUsed: true } },
+        },
+    })
+    const resellers = resellersRaw.map((r: any) => ({
+        id: r.id,
+        discordId: r.discordId,
+        username: r.username,
+        avatar: r.avatar,
+        credits: r.credits,
+        totalSpent: r.totalSpent,
+        isActive: r.isActive,
+        notes: r.notes,
+        tier: r.tier ?? "bronze",
+        manualTier: r.manualTier ?? false,
+        createdAt: r.createdAt.toISOString(),
+        keyCount: r.keys.length,
+        redeemedCount: r.keys.filter((k: any) => k.isUsed).length,
+    }))
 
     // --- User Stats Calculation ---
     const userStats = {
@@ -149,9 +183,12 @@ export default async function ModeratorPage() {
 
             {/* License Key Generator and Lists with Tabs */}
             <Tabs defaultValue="keys" className="w-full">
-                <TabsList className="grid w-full grid-cols-7 mb-8">
+                <TabsList className="grid w-full grid-cols-10 mb-8">
                     <TabsTrigger value="keys" className="gap-2"><Key className="h-4 w-4" /> Keys</TabsTrigger>
                     <TabsTrigger value="users" className="gap-2"><Users className="h-4 w-4" /> Users</TabsTrigger>
+                    <TabsTrigger value="resellers" className="gap-2"><Coins className="h-4 w-4" /> Resellers</TabsTrigger>
+                    <TabsTrigger value="stock" className="gap-2"><Package className="h-4 w-4" /> Stock</TabsTrigger>
+                    <TabsTrigger value="activity" className="gap-2"><Radio className="h-4 w-4" /> Activity</TabsTrigger>
                     <TabsTrigger value="games" className="gap-2"><Gamepad2 className="h-4 w-4" /> Games</TabsTrigger>
                     <TabsTrigger value="status" className="gap-2"><Activity className="h-4 w-4" /> Status</TabsTrigger>
                     <TabsTrigger value="changelog" className="gap-2"><Sparkles className="h-4 w-4" /> Changelog</TabsTrigger>
@@ -247,6 +284,18 @@ export default async function ModeratorPage() {
                             ))}
                         </div>
                     </div>
+                </TabsContent>
+
+                <TabsContent value="resellers">
+                    <ResellerManager resellers={resellers} />
+                </TabsContent>
+
+                <TabsContent value="stock">
+                    <StockManager stockCounts={stockCounts} />
+                </TabsContent>
+
+                <TabsContent value="activity">
+                    <ActivityFeed initialEntries={initialActivity} />
                 </TabsContent>
 
                 <TabsContent value="games">

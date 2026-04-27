@@ -4,6 +4,8 @@ import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/auth'
 import { verifyKeyAuthLicense } from '@/lib/keyauth'
 import { revalidatePath } from 'next/cache'
+import { notifyRedemption } from '@/lib/reseller-notifications'
+import { PLANS, type PlanId } from '@/lib/reseller-plans'
 
 export interface RedeemResult {
     success?: boolean
@@ -94,8 +96,34 @@ export async function redeemLicenseKey(prevState: unknown, formData: FormData): 
         return { error: 'Failed to redeem license key' }
     }
 
+    // If this key was issued by a reseller, fire a Discord DM to them
+    try {
+        const redeemed = await prisma.licenseKey.findUnique({
+            where: { key: rawKey },
+            include: {
+                reseller: { select: { discordId: true, isActive: true } },
+                user: { select: { username: true, robloxUsername: true } },
+            },
+        })
+        if (redeemed?.reseller && redeemed.user) {
+            const planLabel =
+                redeemed.plan && redeemed.plan in PLANS
+                    ? PLANS[redeemed.plan as PlanId].label
+                    : "License"
+            notifyRedemption(redeemed.reseller.discordId, {
+                customerUsername: redeemed.user.username,
+                customerRoblox: redeemed.user.robloxUsername,
+                planLabel,
+                keyValue: redeemed.key,
+            })
+        }
+    } catch (err) {
+        console.warn('[Redeem] Failed to notify reseller:', err)
+    }
+
     revalidatePath('/dashboard')
     revalidatePath('/dashboard/settings')
+    revalidatePath('/reseller')
 
     return {
         success: true,
