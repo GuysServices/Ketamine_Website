@@ -155,3 +155,23 @@ model ChangelogEntry {
 
   @@index([createdAt(sort: Desc)])
 }
+
+model Config {
+  id           String   @id @default(cuid())
+  name         String
+  description  String?
+  game         String // free-form game name (e.g. "Roblox", "CS2", "Valorant")
+  fileName     String // original filename, used on download
+  fileSize     Int // bytes
+  content      String // raw text content of the config (stored directly)
+  tags         String[] @default([])
+  downloads    Int      @default(0)
+  uploaderId   String
+  uploaderName String // denormalized so it survives if uploader is deleted
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([game])
+  @@index([uploaderId])
+  @@index([createdAt(sort: Desc)])
+}
