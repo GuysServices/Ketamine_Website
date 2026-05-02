@@ -119,7 +119,7 @@ export function ChangelogBell({ triggerClassName, showLabel = true }: ChangelogB
                         </DialogDescription>
                     </DialogHeader>
 
-                    <ScrollArea className="flex-1 -mx-6 px-6">
+                    <ScrollArea className="flex-1 -mx-6 px-6 max-h-[60vh] overflow-y-auto">
                         <div className="space-y-3 pb-2">
                             {isPending && entries === null && (
                                 <div className="flex items-center justify-center py-12 text-muted-foreground">
