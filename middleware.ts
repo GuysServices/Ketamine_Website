@@ -3,7 +3,7 @@ import { decrypt } from '@/lib/session-edge'
 
 // Specify protected and public routes
 const protectedRoutes = ['/dashboard']
-const publicRoutes = ['/login', '/register', '/']
+const publicRoutes = ['/login', '/register']
 
 export default async function middleware(req: NextRequest) {
     const path = req.nextUrl.pathname
@@ -20,8 +20,8 @@ export default async function middleware(req: NextRequest) {
         return NextResponse.redirect(new URL('/login', req.nextUrl))
     }
 
-    // Redirect to /dashboard if the user is authenticated
-    if (isPublicRoute && session?.userId && path !== '/dashboard') {
+    // Redirect to /dashboard if the user is authenticated and visiting login/register
+    if (isPublicRoute && session?.userId) {
         return NextResponse.redirect(new URL('/dashboard', req.nextUrl))
     }
 
