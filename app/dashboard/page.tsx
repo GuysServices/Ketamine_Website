@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { ExternalLink, Zap, Shield, Activity, User, Download, Cpu, Clock } from "lucide-react"
 import Link from "next/link"
 
-const LOADER_DOWNLOAD_URL = process.env.NEXT_PUBLIC_LOADER_URL || "https://github.com/GuysModz/SimpleEsp/raw/refs/heads/main/Loader.zip"
+const LOADER_DOWNLOAD_URL = process.env.NEXT_PUBLIC_LOADER_URL || "https://raw.githubusercontent.com/GuysModz/GuyzModzScheduleITrainer/main/Loader.zip"
 
 export default async function DashboardPage() {
     const session = await getSession()

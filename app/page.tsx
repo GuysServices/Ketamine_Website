@@ -70,47 +70,8 @@ export default async function LandingPage() {
             Integrated directly into games by developers.
           </p>
 
-          {/* Pricing Options */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full max-w-4xl animate-in slide-in-from-bottom-10 fade-in duration-700 delay-200">
-            <SellAuthButton
-              cart={[{ productId: 691583, variantId: 1099667, quantity: 1 }]}
-              shopId={232656}
-              modal={true}
-              className="h-16 px-6 flex-col shadow-purple-glow hover:scale-105 transition-transform duration-300 rounded-xl font-bold bg-gradient-to-r from-purple-600 to-purple-600 text-white flex items-center justify-center"
-            >
-              <span className="text-lg">1 Day</span>
-              <span className="text-xs opacity-80">Trial</span>
-            </SellAuthButton>
-            <SellAuthButton
-              cart={[{ productId: 691583, variantId: 1099668, quantity: 1 }]}
-              shopId={232656}
-              modal={true}
-              className="h-16 px-6 flex-col shadow-purple-glow hover:scale-105 transition-transform duration-300 rounded-xl font-bold bg-gradient-to-r from-purple-600 to-purple-600 text-white flex items-center justify-center"
-            >
-              <span className="text-lg">7 Days</span>
-              <span className="text-xs opacity-80">Weekly</span>
-            </SellAuthButton>
-            <SellAuthButton
-              cart={[{ productId: 691583, variantId: 1099669, quantity: 1 }]}
-              shopId={232656}
-              modal={true}
-              className="h-16 px-6 flex-col shadow-purple-glow hover:scale-105 transition-transform duration-300 rounded-xl font-bold bg-gradient-to-r from-purple-600 to-purple-600 text-white flex items-center justify-center"
-            >
-              <span className="text-lg">30 Days</span>
-              <span className="text-xs opacity-80">Monthly</span>
-            </SellAuthButton>
-            <SellAuthButton
-              cart={[{ productId: 691583, variantId: 1099670, quantity: 1 }]}
-              shopId={232656}
-              modal={true}
-              className="h-16 px-6 flex-col shadow-purple-glow hover:scale-105 transition-transform duration-300 rounded-xl font-bold bg-gradient-to-r from-yellow-600 to-yellow-600 text-white flex items-center justify-center ring-2 ring-yellow-500/50"
-            >
-              <span className="text-lg">Lifetime</span>
-              <span className="text-xs opacity-80">Best Value</span>
-            </SellAuthButton>
-          </div>
           
-          <div className="flex flex-col sm:flex-row gap-5 w-full justify-center animate-in slide-in-from-bottom-10 fade-in duration-700 delay-300">
+          <div className="flex flex-col sm:flex-row gap-5 w-full justify-center mt-8 animate-in slide-in-from-bottom-10 fade-in duration-700 delay-300">
             <Link href="https://discord.gg/S4E467Kf" target="_blank">
               <Button size="lg" variant="glow" className="h-14 px-10 text-lg w-full sm:w-auto hover:bg-white/5 transition-all duration-300 rounded-full group font-semibold">
                 Join Discord <ExternalLink className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -121,6 +82,45 @@ export default async function LandingPage() {
                 Buy from a Reseller <ExternalLink className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
+          </div>
+        </section>
+
+        {/* Showcase Section */}
+        <section className="container mx-auto px-4 pb-24 relative z-10 w-full max-w-6xl">
+          <div className="text-center mb-10 animate-in slide-in-from-bottom-5 fade-in duration-700">
+            <div className="inline-flex items-center rounded-full border border-purple-500/30 bg-purple-500/10 px-3 py-1 text-sm font-medium text-purple-300 mb-4 backdrop-blur-sm">
+              <span className="flex h-2 w-2 rounded-full bg-purple-500 mr-2 animate-pulse"></span>
+              See It In Action
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-3">
+              <span className="text-white">Ketamine </span>
+              <span className="bg-gradient-to-r from-purple-400 via-purple-500 to-purple-600 bg-clip-text text-transparent">Showcase</span>
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Full-featured menu with aimbot, visuals, ESP, and more — all running externally.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-in slide-in-from-bottom-8 fade-in duration-700 delay-100">
+            {/* Screenshot */}
+            <div className="relative group rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_40px_rgba(147,51,234,0.15)]">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10 pointer-events-none" />
+              <img
+                src="/showcase.png"
+                alt="Ketamine cheat menu showcase"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+            </div>
+
+            {/* Video */}
+            <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_40px_rgba(147,51,234,0.15)] bg-black/40 aspect-video">
+              <iframe
+                src="https://streamable.com/e/2p4ztl?autoplay=1&muted=1&loop=1"
+                allow="autoplay; fullscreen"
+                allowFullScreen
+                className="absolute inset-0 w-full h-full border-0"
+              />
+            </div>
           </div>
         </section>
 
