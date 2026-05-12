@@ -70,7 +70,28 @@ export default async function LandingPage() {
             Integrated directly into games by developers.
           </p>
 
-          
+          {/* Pricing Options */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-lg animate-in slide-in-from-bottom-10 fade-in duration-700 delay-200">
+            <SellAuthButton
+              cart={[{ productId: 691583, variantId: 1099669, quantity: 1 }]}
+              shopId={232656}
+              modal={true}
+              className="h-16 px-6 flex-col shadow-purple-glow hover:scale-105 transition-transform duration-300 rounded-xl font-bold bg-gradient-to-r from-purple-600 to-purple-600 text-white flex items-center justify-center"
+            >
+              <span className="text-lg">30 Days</span>
+              <span className="text-xs opacity-80">Monthly</span>
+            </SellAuthButton>
+            <SellAuthButton
+              cart={[{ productId: 691583, variantId: 1099670, quantity: 1 }]}
+              shopId={232656}
+              modal={true}
+              className="h-16 px-6 flex-col shadow-purple-glow hover:scale-105 transition-transform duration-300 rounded-xl font-bold bg-gradient-to-r from-yellow-600 to-yellow-600 text-white flex items-center justify-center ring-2 ring-yellow-500/50"
+            >
+              <span className="text-lg">Lifetime</span>
+              <span className="text-xs opacity-80">Best Value</span>
+            </SellAuthButton>
+          </div>
+
           <div className="flex flex-col sm:flex-row gap-5 w-full justify-center mt-8 animate-in slide-in-from-bottom-10 fade-in duration-700 delay-300">
             <Link href="https://discord.gg/S4E467Kf" target="_blank">
               <Button size="lg" variant="glow" className="h-14 px-10 text-lg w-full sm:w-auto hover:bg-white/5 transition-all duration-300 rounded-full group font-semibold">
