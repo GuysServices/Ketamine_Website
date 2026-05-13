@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { toggleGlobalMaintenance, backupDatabase, getGlobalMaintenanceStatus, restoreDatabase } from "./actions"
 import { useState, useEffect } from "react"
-import { AlertTriangle, Database, Power, Download, RefreshCw, Upload } from "lucide-react"
+import { AlertTriangle, Database, Power, Download, RefreshCw, Upload, Link2, CheckCircle2 } from "lucide-react"
+import { getLoaderDownloadUrl, updateLoaderDownloadUrl } from "@/app/actions/site-settings"
 
 export function MaintenanceTab() {
     const [isMaintenanceMode, setIsMaintenanceMode] = useState(false)
@@ -14,12 +15,19 @@ export function MaintenanceTab() {
 
     const [message, setMessage] = useState('We are currently performing scheduled upgrades to improve your experience.')
 
+    // Download link state
+    const [loaderUrl, setLoaderUrl] = useState('')
+    const [isSavingUrl, setIsSavingUrl] = useState(false)
+    const [urlSaved, setUrlSaved] = useState(false)
+    const [urlError, setUrlError] = useState('')
+
     useEffect(() => {
         getGlobalMaintenanceStatus().then((result) => {
             setIsMaintenanceMode(result.isActive)
             if (result.message) setMessage(result.message)
             setIsLoading(false)
         })
+        getLoaderDownloadUrl().then(setLoaderUrl)
     }, [])
 
     const handleToggleMaintenance = async () => {
@@ -166,6 +174,51 @@ export function MaintenanceTab() {
                     </CardContent>
                 </Card>
             </div>
+
+            {/* Download Link Editor */}
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Link2 className="h-6 w-6 text-purple-400" />
+                        Loader Download Link
+                    </CardTitle>
+                    <CardDescription>
+                        Update the download URL shown on the dashboard. Changes take effect immediately — no redeploy needed.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-muted-foreground">Download URL</label>
+                        <Input
+                            value={loaderUrl}
+                            onChange={(e) => { setLoaderUrl(e.target.value); setUrlSaved(false); setUrlError('') }}
+                            placeholder="https://example.com/Loader.zip"
+                            className="bg-black/20 border-white/10 font-mono text-sm"
+                        />
+                        {urlError && <p className="text-sm text-red-400">{urlError}</p>}
+                    </div>
+                    <Button
+                        onClick={async () => {
+                            setIsSavingUrl(true)
+                            setUrlError('')
+                            setUrlSaved(false)
+                            const res = await updateLoaderDownloadUrl(loaderUrl)
+                            if (res.success) {
+                                setUrlSaved(true)
+                                setTimeout(() => setUrlSaved(false), 3000)
+                            } else {
+                                setUrlError(res.error || 'Failed to save')
+                            }
+                            setIsSavingUrl(false)
+                        }}
+                        disabled={isSavingUrl}
+                        className="gap-2"
+                    >
+                        {isSavingUrl ? <RefreshCw className="h-4 w-4 animate-spin" /> : urlSaved ? <CheckCircle2 className="h-4 w-4 text-green-400" /> : <Download className="h-4 w-4" />}
+                        {isSavingUrl ? 'Saving...' : urlSaved ? 'Saved!' : 'Update Download Link'}
+                    </Button>
+                </CardContent>
+            </Card>
         </div>
     )
 }

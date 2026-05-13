@@ -156,6 +156,12 @@ model ChangelogEntry {
   @@index([createdAt(sort: Desc)])
 }
 
+model SiteSetting {
+  key       String   @id // e.g. "loader_download_url"
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
 model Config {
   id           String   @id @default(cuid())
   name         String

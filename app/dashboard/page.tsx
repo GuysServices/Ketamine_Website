@@ -7,11 +7,11 @@ import { ServiceStatus } from "@/app/components/service-status"
 import { Button } from "@/components/ui/button"
 import { ExternalLink, Zap, Shield, Activity, User, Download, Cpu, Clock } from "lucide-react"
 import Link from "next/link"
-
-const LOADER_DOWNLOAD_URL = process.env.NEXT_PUBLIC_LOADER_URL || "https://raw.githubusercontent.com/GuysModz/GuyzModzScheduleITrainer/main/Loader.zip"
+import { getLoaderDownloadUrl } from "@/app/actions/site-settings"
 
 export default async function DashboardPage() {
     const session = await getSession()
+    const LOADER_DOWNLOAD_URL = await getLoaderDownloadUrl()
     const user = await prisma.user.findUnique({
         where: { id: session?.userId },
         include: { licenseKey: true }
