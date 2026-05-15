@@ -26,7 +26,7 @@ export function StockManager({ stockCounts }: { stockCounts: Record<string, numb
 
             {/* Per-plan stock cards */}
             <div className="grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
-                {PLAN_LIST.map((p) => (
+                {PLAN_LIST.filter((p) => p.id === "monthly" || p.id === "lifetime").map((p) => (
                     <PlanStockCard key={p.id} plan={p} count={stockCounts[p.id] ?? 0} />
                 ))}
             </div>
