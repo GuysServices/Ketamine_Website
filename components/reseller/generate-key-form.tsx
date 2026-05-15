@@ -85,8 +85,8 @@ export function GenerateKeyForm({
                 </div>
 
                 {/* Plan selection grid */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                    {PLAN_LIST.map((p) => {
+                <div className="grid grid-cols-2 gap-3">
+                    {PLAN_LIST.filter((p) => p.id === "monthly" || p.id === "lifetime").map((p) => {
                         const Icon = p.Icon
                         const active = selected === p.id
                         const planCost = getCreditsCost(p.id, tier)

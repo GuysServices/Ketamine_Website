@@ -79,9 +79,9 @@ export function tierForSpend(totalSpent: number): Tier {
  * progressively cheaper. We round to nice whole-credit numbers.
  */
 const TIER_PRICING: Record<Tier, Record<PlanId, number>> = {
-    bronze: { daily: 1, weekly: 3, monthly: 5, lifetime: 9 },
-    silver: { daily: 1, weekly: 2, monthly: 4, lifetime: 8 },
-    gold: { daily: 1, weekly: 2, monthly: 3, lifetime: 6 },
+    bronze: { daily: 1, weekly: 3, monthly: 3, lifetime: 5 },
+    silver: { daily: 1, weekly: 2, monthly: 2, lifetime: 4 },
+    gold: { daily: 1, weekly: 2, monthly: 2, lifetime: 3 },
 }
 
 export function getCreditsCost(planId: PlanId, tier: Tier = "bronze"): number {
@@ -114,8 +114,8 @@ export const PLANS: Record<PlanId, PlanConfig> = {
         label: "30 Days",
         description: "Full month access",
         durationDays: 30,
-        customerPrice: 8,
-        creditsCost: 5,
+        customerPrice: 5,
+        creditsCost: 3,
         Icon: CalendarRange,
         color: "text-purple-400",
     },
@@ -124,8 +124,8 @@ export const PLANS: Record<PlanId, PlanConfig> = {
         label: "Lifetime",
         description: "Forever access",
         durationDays: null,
-        customerPrice: 15,
-        creditsCost: 9,
+        customerPrice: 10,
+        creditsCost: 5,
         Icon: InfinityIcon,
         color: "text-amber-400",
     },

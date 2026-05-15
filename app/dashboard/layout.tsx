@@ -1,6 +1,6 @@
 'use client'
 
-import { LayoutDashboard, Activity, LogOut, Settings, User, Hammer, Book, Palette, Coins, Home, FileCode } from "lucide-react"
+import { LayoutDashboard, Activity, LogOut, Settings, User, Hammer, Book, Palette, Coins, Home, FileCode, ShieldCheck } from "lucide-react"
 import Link from "next/link"
 import { useTheme } from "@/components/theme-context"
 import { logout } from "@/app/actions"
@@ -46,6 +46,7 @@ export default function DashboardLayout({
         { href: "/dashboard/moderator", icon: Hammer, label: "Moderator", adminOnly: true }, // Protected route
         { href: "/dashboard/rules", icon: Book, label: "Rules" },
         { href: "/resellers", icon: Coins, label: "Resellers" },
+        { href: "/reseller/login", icon: ShieldCheck, label: "Reseller Login" },
         { href: "/dashboard/profile", icon: User, label: "Profile" },
     ]
 
