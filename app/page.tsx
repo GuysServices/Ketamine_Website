@@ -135,11 +135,13 @@ export default async function LandingPage() {
 
             {/* Video */}
             <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_40px_rgba(147,51,234,0.15)] bg-black/40 aspect-video">
-              <iframe
-                src="https://streamable.com/e/2p4ztl?autoplay=1&muted=1&loop=1"
-                allow="autoplay; fullscreen"
-                allowFullScreen
-                className="absolute inset-0 w-full h-full border-0"
+              <video
+                src="https://cdn.discordapp.com/attachments/1308268336119021589/1504621343449022505/2026-05-12_17-43-11.mp4?ex=6a1cbf52&is=6a1b6dd2&hm=f9096d006f2ef811d48cc8857c25bfad80a211839d204f26501c3e7345e705e3&"
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
               />
             </div>
           </div>
@@ -183,6 +185,43 @@ export default async function LandingPage() {
               quantity={1}
               description="Premium aged accounts (100-350 days). Highest trust tier we offer."
               accent="from-yellow-600 to-yellow-600"
+            />
+          </div>
+        </section>
+
+        {/* Configs Section */}
+        <section id="configs" className="container mx-auto px-4 pb-24 relative z-10 w-full max-w-6xl">
+          <div className="text-center mb-10 animate-in slide-in-from-bottom-5 fade-in duration-700">
+            <div className="inline-flex items-center rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-sm font-medium text-blue-300 mb-4 backdrop-blur-sm">
+              <span className="flex h-2 w-2 rounded-full bg-blue-500 mr-2 animate-pulse"></span>
+              Script Configs
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-3">
+              <span className="text-white">Buy </span>
+              <span className="bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 bg-clip-text text-transparent">Configs</span>
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Pre-configured settings for UE and Khook scripts. Optimized for performance and compatibility.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in slide-in-from-bottom-8 fade-in duration-700 delay-100">
+            <ConfigCard
+              name="UE Configs"
+              description="Optimized configuration for UE script with all features enabled and tuned for stability. Full File of 8+ configs for you to use."
+              accent="from-blue-600 to-blue-600"
+              price="$5"
+              productId={741508}
+              variantId={1212192}
+            />
+            <ConfigCard
+              name="Khook Configs"
+              description="Premium Khook script configuration with advanced settings and custom optimizations. Full File of 8+ configs for you to use."
+              accent="from-cyan-600 to-cyan-600"
+              price="$5"
+              productId={741508}
+              variantId={1212191}
+              highlight
             />
           </div>
         </section>
@@ -275,6 +314,60 @@ function AccountCard({
           shopId={232656}
           modal={true}
           className={`w-full h-12 rounded-xl font-bold text-white bg-gradient-to-r ${accent} shadow-purple-glow hover:scale-[1.02] transition-transform duration-300 flex items-center justify-center gap-2`}
+        >
+          <Check className="h-4 w-4" />
+          <span>Purchase</span>
+        </SellAuthButton>
+      </CardContent>
+    </Card>
+  )
+}
+
+function ConfigCard({
+  name,
+  description,
+  accent,
+  price,
+  productId,
+  variantId,
+  highlight,
+}: {
+  name: string
+  description: string
+  accent: string
+  price: string
+  productId: number
+  variantId?: number
+  highlight?: boolean
+}) {
+  return (
+    <Card
+      className={`group relative overflow-hidden border-white/5 bg-white/5 hover:bg-white/10 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-900/20 ${
+        highlight ? "ring-2 ring-blue-500/50" : ""
+      }`}
+    >
+      {highlight && (
+        <div className="absolute top-3 right-3 rounded-full bg-blue-500/20 border border-blue-500/40 px-2 py-0.5 text-[10px] font-semibold text-blue-300">
+          POPULAR
+        </div>
+      )}
+      <CardHeader>
+        <CardTitle className="text-2xl text-white group-hover:text-blue-300 transition-colors">
+          {name}
+        </CardTitle>
+        <CardDescription className="text-muted-foreground/80 leading-relaxed">
+          {description}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="pt-2 space-y-4">
+        <div className="text-3xl font-bold text-blue-400">
+          {price}
+        </div>
+        <SellAuthButton
+          cart={[{ productId, variantId, quantity: 1 }]}
+          shopId={232656}
+          modal={true}
+          className={`w-full h-12 rounded-xl font-bold text-white bg-gradient-to-r ${accent} shadow-blue-glow hover:scale-[1.02] transition-transform duration-300 flex items-center justify-center gap-2`}
         >
           <Check className="h-4 w-4" />
           <span>Purchase</span>

@@ -2,6 +2,7 @@
 
 import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/auth'
+import { isAdminUser } from '@/lib/admin'
 import { revalidatePath } from 'next/cache'
 
 const MAX_CONTENT_BYTES = 500_000 // 500KB cap on stored config text
@@ -184,7 +185,8 @@ export async function deleteConfig(id: string): Promise<void> {
         select: { uploaderId: true },
     })
     if (!cfg) throw new Error('Config not found')
-    if (cfg.uploaderId !== user.id && !user.isModerator) {
+    const isAdmin = await isAdminUser(user.id)
+    if (cfg.uploaderId !== user.id && !user.isModerator && !isAdmin) {
         throw new Error('Not authorized to delete this config')
     }
     await prisma.config.delete({ where: { id } })
