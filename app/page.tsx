@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Shield, Zap, Download, Check, ExternalLink, LucideIcon } from "lucide-react"
 import { SellAuthButton } from "@/components/sellauth-embed"
 import { getSession } from "@/lib/auth"
+import { LiveCounter } from "@/components/live-counter"
 
 export default async function LandingPage() {
   const session = await getSession()
@@ -16,6 +17,7 @@ export default async function LandingPage() {
             <span className="relative bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent transition-all group-hover:bg-gradient-to-l group-hover:scale-105 duration-300">Ketamine</span>
           </div>
         </div>
+        <LiveCounter />
         <nav className="flex items-center gap-2">
           <Link href="/rulebook">
             <Button variant="ghost" className="rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all duration-300">Rules</Button>

@@ -181,3 +181,14 @@ model Config {
   @@index([uploaderId])
   @@index([createdAt(sort: Desc)])
 }
+
+model ActiveSession {
+  id         String   @id @default(cuid())
+  type       String   // "external" | "script"
+  identifier String   // Unique hash/ID for the user/hardware
+  lastSeen   DateTime @default(now())
+
+  @@unique([type, identifier])
+  @@index([lastSeen])
+}
+

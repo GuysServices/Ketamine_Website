@@ -5,6 +5,7 @@ import { getSession } from "@/lib/auth"
 import { SupportedGames } from "@/components/supported-games"
 import { SellAuthButton } from "@/components/sellauth-embed"
 import { CopyScriptBox } from "@/components/copy-script-box"
+import { LiveCounter } from "@/components/live-counter"
 
 export default async function ScriptHubPage() {
   const session = await getSession()
@@ -18,6 +19,7 @@ export default async function ScriptHubPage() {
             <span className="relative bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent transition-all group-hover:bg-gradient-to-l group-hover:scale-105 duration-300">Ketamine</span>
           </div>
         </Link>
+        <LiveCounter />
         <nav className="flex items-center gap-2">
           <Link href="/rulebook">
             <Button variant="ghost" className="rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all duration-300">Rules</Button>
