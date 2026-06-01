@@ -4,6 +4,7 @@ import { ExternalLink, Key, Shield } from "lucide-react"
 import { getSession } from "@/lib/auth"
 import { SupportedGames } from "@/components/supported-games"
 import { SellAuthButton } from "@/components/sellauth-embed"
+import { CopyScriptBox } from "@/components/copy-script-box"
 
 export default async function ScriptHubPage() {
   const session = await getSession()
@@ -61,9 +62,11 @@ export default async function ScriptHubPage() {
                 Script Hub
               </span>
             </h1>
-            <p className="text-muted-foreground max-w-xl mx-auto mb-10">
+            <p className="text-muted-foreground max-w-xl mx-auto mb-8">
               Complete the quick steps to get your free script key, or upgrade to the paid version to skip the ads entirely.
             </p>
+
+            <CopyScriptBox script='loadstring(game:HttpGet("https://first-repository-flvb.onrender.com/loader"))()' />
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
               <Link href="https://link-target.net/6118378/LEy4RkpFAoi2" target="_blank" className="w-full sm:w-auto">
@@ -88,16 +91,30 @@ export default async function ScriptHubPage() {
           {/* Video and Games List Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start animate-in slide-in-from-bottom-8 fade-in duration-700 delay-200">
             {/* Video Column */}
-            <div className="lg:col-span-2 relative rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_40px_rgba(147,51,234,0.15)] bg-black/40 aspect-video w-full">
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10 pointer-events-none" />
-              <video
-                src="https://cdn.discordapp.com/attachments/1290423520051859460/1510839511733633135/2026-05-31_22-54-44_-_Trim.mp4?ex=6a1e4671&is=6a1cf4f1&hm=9cb96a8451fc38d5755bd102d6fddb4e599d2f80f6fa3a01fdde94be7aacb8ef&"
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="absolute inset-0 w-full h-full object-cover"
-              />
+            <div className="lg:col-span-2 flex flex-col gap-4">
+              <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_40px_rgba(147,51,234,0.15)] bg-black/40 aspect-video w-full group">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10 pointer-events-none" />
+                <video
+                  src="https://cdn.discordapp.com/attachments/1290423520051859460/1510839511733633135/2026-05-31_22-54-44_-_Trim.mp4?ex=6a1e4671&is=6a1cf4f1&hm=9cb96a8451fc38d5755bd102d6fddb4e599d2f80f6fa3a01fdde94be7aacb8ef&"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+              </div>
+              
+              <div className="flex flex-col sm:flex-row items-center justify-between p-5 rounded-2xl bg-[#0f172a]/60 border border-white/10 backdrop-blur-md shadow-[0_4px_20px_0_rgba(0,0,0,0.2)] hover:border-purple-500/30 transition-all group gap-4">
+                <div className="flex flex-col text-center sm:text-left">
+                  <span className="text-xs text-slate-400 uppercase tracking-wider font-bold mb-1">Featured Game in Video</span>
+                  <span className="text-xl font-black bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">FFA Headshot</span>
+                </div>
+                <Link href="https://www.roblox.com/games/70611375906033/HEADSHOT" target="_blank" className="w-full sm:w-auto">
+                  <Button className="w-full sm:w-auto gap-2 bg-purple-600/20 hover:bg-purple-600/40 text-purple-300 hover:text-white border border-purple-500/30 hover:border-purple-500/50 transition-all rounded-xl shadow-[0_0_15px_rgba(147,51,234,0.1)]">
+                    Play on Roblox <ExternalLink className="w-4 h-4" />
+                  </Button>
+                </Link>
+              </div>
             </div>
 
             {/* Games List Sidebar */}
