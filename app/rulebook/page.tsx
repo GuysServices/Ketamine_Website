@@ -42,6 +42,15 @@ export default function RulebookPage() {
                     </div>
                 </Link>
                 <nav className="flex items-center gap-2">
+                    <Link href="/rulebook">
+                        <Button variant="ghost" className="rounded-xl text-white bg-white/10 transition-all duration-300">Rules</Button>
+                    </Link>
+                    <Link href="/robux">
+                        <Button variant="ghost" className="rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all duration-300">Robux</Button>
+                    </Link>
+                    <Link href="/scripthub">
+                        <Button variant="ghost" className="rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all duration-300">Script Hub</Button>
+                    </Link>
                     <Link href="/login">
                         <Button variant="ghost" className="rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all duration-300">Login</Button>
                     </Link>

@@ -149,6 +149,16 @@ export default function RobuxPage() {
               Rules
             </Button>
           </Link>
+          <Link href="/robux">
+            <Button variant="ghost" className="rounded-xl text-white bg-white/10 transition-all duration-300">
+              Robux
+            </Button>
+          </Link>
+          <Link href="/scripthub">
+            <Button variant="ghost" className="rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all duration-300">
+              Script Hub
+            </Button>
+          </Link>
           <Link href="/login">
             <Button variant="ghost" className="rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all duration-300">
               Login
