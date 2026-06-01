@@ -141,7 +141,7 @@ export default async function LandingPage() {
             {/* Video */}
             <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_40px_rgba(147,51,234,0.15)] bg-black/40 aspect-video">
               <video
-                src="https://cdn.discordapp.com/attachments/1308268336119021589/1504621343449022505/2026-05-12_17-43-11.mp4?ex=6a1cbf52&is=6a1b6dd2&hm=f9096d006f2ef811d48cc8857c25bfad80a211839d204f26501c3e7345e705e3&"
+                src="https://cdn.discordapp.com/attachments/1290423520051859460/1503876191604572341/2026-05-12_17-43-11.mp4?ex=6a1dfdd8&is=6a1cac58&hm=1e247927980cc98ece1832bd1182a3809812a68136451e561a4e8cbd7f7e047f&"
                 autoPlay
                 muted
                 loop
