@@ -30,6 +30,9 @@ export default async function ScriptHubPage() {
           <Link href="/scripthub">
             <Button variant="ghost" className="rounded-xl text-white bg-white/10 transition-all duration-300">Script Hub</Button>
           </Link>
+          <Link href="/reviews">
+            <Button variant="ghost" className="rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all duration-300">Reviews</Button>
+          </Link>
           {session?.userId ? (
             <Link href="/dashboard">
               <Button className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold transition-all duration-300 shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_rgba(37,99,235,0.6)]">
