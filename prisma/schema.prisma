@@ -1,0 +1,194 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id                String      @id @default(cuid())
+  username          String      @unique
+  passwordHash      String
+  robloxUsername    String?
+  isBanned          Boolean     @default(false)
+  banReason         String?
+  isModerator       Boolean     @default(false)
+  createdAt         DateTime    @default(now())
+  isFakeMaintenance Boolean     @default(false)
+  isShadowBanned    Boolean     @default(false)
+  licenseKey        LicenseKey?
+  discordId         String?     @unique
+  discordUsername   String?
+  ownedThemes       String[]    @default(["default"])
+  badges            Badge[]     @relation("BadgeToUser")
+}
+
+model Badge {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  color       String   @default("#3b82f6")
+  icon        String   @default("award")
+  createdAt   DateTime @default(now())
+  users       User[]   @relation("BadgeToUser")
+}
+
+model LicenseKey {
+  id          String    @id @default(cuid())
+  key         String    @unique
+  isUsed      Boolean   @default(false)
+  maxUses     Int       @default(1)
+  usedCount   Int       @default(0)
+  isActive    Boolean   @default(true)
+  expiresAt   DateTime?
+  lastUsedAt  DateTime?
+  metadata    Json      @default("{}")
+  userId      String?   @unique
+  createdAt   DateTime  @default(now())
+  user        User?     @relation(fields: [userId], references: [id])
+
+  // Reseller-issued key tracking
+  resellerId  String?
+  reseller    Reseller? @relation(fields: [resellerId], references: [id], onDelete: SetNull)
+  plan        String?   // "daily" | "weekly" | "monthly" | "lifetime"
+  creditsCost Int       @default(0)
+
+  @@index([resellerId])
+}
+
+model Reseller {
+  id          String       @id @default(cuid())
+  discordId   String       @unique
+  username    String
+  avatar      String?
+  credits     Int          @default(0)
+  totalSpent  Int          @default(0)
+  isActive    Boolean      @default(true)
+  notes       String?
+
+  // Tier system (auto-promoted by totalSpent unless manualTier=true)
+  tier        String       @default("bronze") // "bronze" | "silver" | "gold"
+  manualTier  Boolean      @default(false)
+
+  // Profile customization
+  displayName String?
+  bannerColor String?
+  paymentInfo String?  // free-form text (Discord tag, PayPal link, etc.)
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  keys        LicenseKey[]
+
+  @@index([discordId])
+}
+
+model ResellerLedger {
+  id          String   @id @default(cuid())
+  resellerId  String
+  delta       Int      // +N for top-up, -N for spend, can be negative for refunds reversal
+  reason      String   // "topup" | "spend" | "refund" | "adjustment"
+  note        String?  // admin note or "Generated 30-day key (abc123)"
+  balanceAfter Int
+  createdAt   DateTime @default(now())
+
+  @@index([resellerId])
+  @@index([createdAt(sort: Desc)])
+}
+
+model Whitelist {
+  id             String   @id @default(cuid())
+  robloxUsername String   @unique
+  discordId      String
+  keyUsed        String?
+  plan           String   @default("free")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model AccessKey {
+  id       String   @id @default(cuid())
+  key      String   @unique
+  issuedBy String
+  issuedAt DateTime @default(now())
+  isUsed   Boolean  @default(false)
+  plan     String
+}
+
+model ServiceStatus {
+  id          String   @id @default(cuid())
+  serviceKey  String   @unique // e.g. "database", "external", "keyauth"
+  name        String // Display name shown on Status page
+  description String // Short desc
+  status      String   @default("operational") // operational | degraded | maintenance | offline
+  message     String? // Optional custom message shown when not operational
+  autoDetect  Boolean  @default(true) // If true, ignore manual status and compute live
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model PasswordResetCode {
+  id        String   @id @default(cuid())
+  userId    String
+  codeHash  String
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model ChangelogEntry {
+  id        String   @id @default(cuid())
+  version   String
+  date      String // Display date, e.g. "April 23, 2026"
+  type      String   @default("feature") // major | feature | fix
+  title     String
+  changes   String[] // Array of bullet points
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([createdAt(sort: Desc)])
+}
+
+model SiteSetting {
+  key       String   @id // e.g. "loader_download_url"
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+model Config {
+  id           String   @id @default(cuid())
+  name         String
+  description  String?
+  game         String // free-form game name (e.g. "Roblox", "CS2", "Valorant")
+  fileName     String // original filename, used on download
+  fileSize     Int // bytes
+  content      String // raw text content of the config (stored directly)
+  tags         String[] @default([])
+  downloads    Int      @default(0)
+  uploaderId   String
+  uploaderName String // denormalized so it survives if uploader is deleted
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([game])
+  @@index([uploaderId])
+  @@index([createdAt(sort: Desc)])
+}
+
+model ActiveSession {
+  id         String   @id @default(cuid())
+  type       String   // "external" | "script"
+  identifier String   // Unique hash/ID for the user/hardware
+  lastSeen   DateTime @default(now())
+
+  @@unique([type, identifier])
+  @@index([lastSeen])
+}
+
