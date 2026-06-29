@@ -43,7 +43,6 @@ const FPS_GAMES = [
 ];
 
 const TYCOON_SIM_GAMES = [
-  // Add your Tycoon/Simulator games here
   "Sell Lemons",
   "1 Squish a Dumpling Escape",
   "+1 Speed Brick Escape",
@@ -60,14 +59,14 @@ function GamePanel({ title, subtitle, games }: { title: string; subtitle: string
   );
 
   return (
-    <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-xl flex flex-col h-[500px] shadow-[0_0_40px_rgba(0,0,0,0.5)]">
+    <div className="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-xl flex flex-col h-[500px] shadow-[0_0_40px_rgba(0,0,0,0.5)]">
       <div className="flex items-center gap-3 mb-4 pb-4 border-b border-white/10 shrink-0">
-        <div className="p-2 bg-purple-500/20 rounded-lg">
+        <div className="p-2 bg-purple-500/20 rounded-lg shrink-0">
           <Gamepad2 className="w-5 h-5 text-purple-400" />
         </div>
         <div>
-          <h3 className="text-lg font-bold text-white">{title}</h3>
-          <p className="text-xs text-muted-foreground">{subtitle}</p>
+          <h3 className="text-base font-bold text-white leading-tight">{title}</h3>
+          <p className="text-xs text-muted-foreground">Works natively with these titles</p>
         </div>
       </div>
       <div className="relative mb-4 shrink-0">
@@ -100,7 +99,7 @@ function GamePanel({ title, subtitle, games }: { title: string; subtitle: string
 
 export function SupportedGames() {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
       <GamePanel
         title="Supported Games FPS HUB"
         subtitle="Works natively with these titles"
