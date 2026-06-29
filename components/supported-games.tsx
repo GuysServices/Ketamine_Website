@@ -99,7 +99,7 @@ function GamePanel({ title, subtitle, games }: { title: string; subtitle: string
 
 export function SupportedGames() {
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+    <div className="flex flex-col gap-6">
       <GamePanel
         title="Supported Games FPS HUB"
         subtitle="Works natively with these titles"
