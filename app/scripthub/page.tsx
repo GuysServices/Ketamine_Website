@@ -73,13 +73,12 @@ export default async function ScriptHubPage() {
 
             <CopyScriptBox 
               title="FPS Script Hub"
-              script='loadstring(game:HttpGet("https://first-repository-flvb.onrender.com/loader"))()' 
+              script='loadstring(game:HttpGet("https://api.jnkie.com/api/v1/luascripts/public/5ebbbea1ae6350768a593007ee4b66cdd892c17ba7a94816fb0690b246252539/download"))()' 
             />
 
             <CopyScriptBox 
               title="Simulator/Tycoon Script Hub"
-              script='getgenv().SCRIPT_KEY = "REPLACE_THIS_TEXT_WITH_KEY"
-loadstring(game:HttpGet("https://api.jnkie.com/api/v1/luascripts/public/5ebbbea1ae6350768a593007ee4b66cdd892c17ba7a94816fb0690b246252539/download"))()' 
+              script='loadstring(game:HttpGet("https://api.jnkie.com/api/v1/luascripts/public/1b40931c81e08006eabbeeaf265584276a378721b64ca38f66ebb457f3aa2d53/download"))()' 
             />
 
             <div className="flex flex-col lg:flex-row gap-4 justify-center items-center flex-wrap">
