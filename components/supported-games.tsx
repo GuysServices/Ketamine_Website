@@ -57,7 +57,7 @@ export function SupportedGames() {
           <Gamepad2 className="w-5 h-5 text-purple-400" />
         </div>
         <div>
-          <h3 className="text-lg font-bold text-white">Supported Games</h3>
+          <h3 className="text-lg font-bold text-white">Supported Games FPS HUB</h3>
           <p className="text-xs text-muted-foreground">Works natively with these titles</p>
         </div>
       </div>
